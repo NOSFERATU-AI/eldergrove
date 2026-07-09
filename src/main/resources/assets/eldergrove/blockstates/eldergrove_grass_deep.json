@@ -1,0 +1,10 @@
+{
+  "variants": {
+    "snowy=false": {
+      "model": "eldergrove:block/eldergrove_grass_deep"
+    },
+    "snowy=true": {
+      "model": "eldergrove:block/eldergrove_grass_snowy"
+    }
+  }
+}
