@@ -9,6 +9,7 @@ public final class Eldergrove {
     public static final String MODID = "eldergrove";
 
     public Eldergrove(IEventBus modBus, ModContainer modContainer) {
+        EldergroveBlocks.register(modBus);
         EldergroveItems.register(modBus);
         EldergroveCreativeTabs.register(modBus);
     }
