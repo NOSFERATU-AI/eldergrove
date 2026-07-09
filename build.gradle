@@ -100,51 +100,50 @@ tasks.register('generateEldergroveTextures') {
 
         writeTexture('eldergrove_moss') { int x, int y ->
             int n = noise(x, y, 1)
-            boolean vein = ((x + y * 2) % 9 == 0) || ((x * 3 + y) % 17 == 0)
-            argb(255, 38 + n, 84 + n * 2, 43 + n + (vein ? 18 : 0))
+            boolean deep = ((x * 2 + y * 3) % 11 == 0)
+            boolean glow = ((x * 5 + y * 7) % 37 == 0)
+            argb(255, 22 + n + (glow ? 18 : 0), 64 + n * 2 + (glow ? 26 : 0), 43 + n + (deep ? 18 : 0) + (glow ? 36 : 0))
         }
 
-        writeTexture('eldergrove_planks') { int x, int y ->
+        writeTexture('elderwood_planks') { int x, int y ->
             int n = noise(x, y, 2)
             boolean seam = y == 3 || y == 7 || y == 11 || x == 0 || x == 15
             boolean grain = (x + y + n) % 5 == 0
-            argb(255, 26 + n + (grain ? 7 : 0), 101 + n, 105 + n * 2 - (seam ? 18 : 0))
+            argb(255, 34 + n + (grain ? 8 : 0), 76 + n - (seam ? 12 : 0), 71 + n * 2 - (seam ? 14 : 0))
         }
 
-        writeTexture('eldergrove_leaves') { int x, int y ->
-            int n = noise(x, y, 3)
-            boolean glint = ((x * 5 + y * 3) % 23 == 0)
-            argb(255, 55 + n + (glint ? 18 : 0), 104 + n * 2 + (glint ? 12 : 0), 72 + n + (glint ? 34 : 0))
-        }
-
-        writeTexture('silverwood_log') { int x, int y ->
+        writeTexture('elderwood_log') { int x, int y ->
             int n = noise(x, y, 4)
-            boolean streak = x == 3 || x == 8 || x == 13 || ((x + y) % 11 == 0)
-            argb(255, 176 + n + (streak ? 18 : 0), 190 + n + (streak ? 12 : 0), 190 + n * 2 + (streak ? 18 : 0))
+            boolean paleStreak = x == 2 || x == 7 || x == 12 || ((x + y) % 13 == 0)
+            boolean darkCrack = ((x * 3 + y) % 17 == 0)
+            argb(255, 154 + n + (paleStreak ? 33 : 0) - (darkCrack ? 26 : 0), 180 + n + (paleStreak ? 20 : 0) - (darkCrack ? 18 : 0), 175 + n * 2 + (paleStreak ? 26 : 0) - (darkCrack ? 12 : 0))
         }
 
-        writeTexture('silverwood_log_top') { int x, int y ->
+        writeTexture('elderwood_log_top') { int x, int y ->
             double dx = x - 7.5D
             double dy = y - 7.5D
-            int ring = ((int) Math.floor(Math.sqrt(dx * dx + dy * dy) * 2.0D)) % 4
+            int ring = ((int) Math.floor(Math.sqrt(dx * dx + dy * dy) * 2.2D)) % 4
             int n = noise(x, y, 5)
-            argb(255, 184 + n - ring * 8, 198 + n - ring * 6, 197 + n - ring * 3)
+            boolean glowRing = ring == 0 && ((x + y) % 3 == 0)
+            argb(255, 172 + n - ring * 7 + (glowRing ? 20 : 0), 193 + n - ring * 5 + (glowRing ? 12 : 0), 190 + n - ring * 2 + (glowRing ? 18 : 0))
         }
 
-        writeTexture('silverwood_leaves') { int x, int y ->
+        writeTexture('elderwood_leaves') { int x, int y ->
             int n = noise(x, y, 6)
             boolean pale = ((x * 2 + y * 5) % 19 == 0)
-            argb(255, 119 + n + (pale ? 20 : 0), 159 + n + (pale ? 14 : 0), 143 + n * 2 + (pale ? 22 : 0))
+            boolean blueGlow = ((x * 7 + y * 11) % 43 == 0)
+            argb(255, 70 + n + (pale ? 30 : 0), 128 + n + (pale ? 32 : 0) + (blueGlow ? 18 : 0), 105 + n * 2 + (pale ? 40 : 0) + (blueGlow ? 44 : 0))
         }
 
-        writeTexture('silverwood_core') { int x, int y ->
+        writeTexture('grove_heart') { int x, int y ->
             double dx = x - 7.5D
             double dy = y - 7.5D
             double dist = Math.sqrt(dx * dx + dy * dy)
             int n = noise(x, y, 7)
-            boolean rune = x == 7 || x == 8 || y == 7 || y == 8 || ((x + y) % 7 == 0 && dist < 6.5D)
-            int glow = Math.max(0, 80 - (int) (dist * 10))
-            argb(255, 42 + n + (rune ? 55 : 0), 91 + n + glow + (rune ? 55 : 0), 96 + n + glow + (rune ? 70 : 0))
+            boolean cross = x == 7 || x == 8 || y == 7 || y == 8
+            boolean rune = cross || (((x + y) % 6 == 0 || (x * 2 - y) % 7 == 0) && dist < 6.5D)
+            int glow = Math.max(0, 95 - (int) (dist * 11))
+            argb(255, 26 + n + (rune ? 55 : 0), 86 + n + glow + (rune ? 52 : 0), 92 + n + glow + (rune ? 78 : 0))
         }
     }
 }
