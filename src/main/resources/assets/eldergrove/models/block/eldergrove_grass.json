@@ -1,5 +1,6 @@
 {
   "parent": "minecraft:block/grass_block",
+  "render_type": "minecraft:cutout_mipped",
   "textures": {
     "particle": "minecraft:block/grass_block_side",
     "bottom": "minecraft:block/dirt",
