@@ -3,6 +3,7 @@ package nosferatu.eldergrove;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.LeavesBlock;
+import net.minecraft.world.level.block.RotatedPillarBlock;
 import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.material.MapColor;
@@ -29,6 +30,24 @@ public final class EldergroveBlocks {
 
     public static final DeferredBlock<LeavesBlock> ELDERGROVE_LEAVES = BLOCKS.register(
             "eldergrove_leaves",
+            () -> new LeavesBlock(
+                    BlockBehaviour.Properties.ofFullCopy(Blocks.OAK_LEAVES)
+                            .mapColor(MapColor.COLOR_PURPLE)
+                            .sound(SoundType.AZALEA_LEAVES)
+            )
+    );
+
+    public static final DeferredBlock<RotatedPillarBlock> SILVERWOOD_LOG = BLOCKS.register(
+            "silverwood_log",
+            () -> new RotatedPillarBlock(
+                    BlockBehaviour.Properties.ofFullCopy(Blocks.BIRCH_LOG)
+                            .mapColor(MapColor.WOOD)
+                            .sound(SoundType.WOOD)
+            )
+    );
+
+    public static final DeferredBlock<LeavesBlock> SILVERWOOD_LEAVES = BLOCKS.register(
+            "silverwood_leaves",
             () -> new LeavesBlock(
                     BlockBehaviour.Properties.ofFullCopy(Blocks.OAK_LEAVES)
                             .mapColor(MapColor.COLOR_PURPLE)
