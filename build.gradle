@@ -5,6 +5,9 @@ plugins {
     id 'idea'
 }
 
+import java.awt.image.BufferedImage
+import javax.imageio.ImageIO
+
 version = mod_version
 group = mod_group_id
 
@@ -14,8 +17,11 @@ base {
 
 java.toolchain.languageVersion = JavaLanguageVersion.of(21)
 
+def generatedTexturesDir = layout.buildDirectory.dir('generated/eldergroveTextures')
+
 sourceSets.main.resources {
     srcDir('src/generated/resources')
+    srcDir(generatedTexturesDir)
     exclude("src/generated/**/.cache")
 }
 
@@ -67,6 +73,82 @@ configurations {
 dependencies {
 }
 
+tasks.register('generateEldergroveTextures') {
+    outputs.dir(generatedTexturesDir)
+
+    doLast {
+        File root = generatedTexturesDir.get().asFile
+
+        def clamp = { int value -> Math.max(0, Math.min(255, value)) }
+        def argb = { int a, int r, int g, int b ->
+            (int) ((clamp(a) << 24) | (clamp(r) << 16) | (clamp(g) << 8) | clamp(b))
+        }
+        def noise = { int x, int y, int salt ->
+            (((x * 37 + y * 57 + salt * 101 + x * y * 13) & 15) - 7)
+        }
+        def writeTexture = { String name, Closure<Integer> colorAt ->
+            File file = new File(root, "assets/eldergrove/textures/block/${name}.png")
+            file.parentFile.mkdirs()
+            BufferedImage image = new BufferedImage(16, 16, BufferedImage.TYPE_INT_ARGB)
+            for (int y = 0; y < 16; y++) {
+                for (int x = 0; x < 16; x++) {
+                    image.setRGB(x, y, colorAt(x, y))
+                }
+            }
+            ImageIO.write(image, 'png', file)
+        }
+
+        writeTexture('eldergrove_moss') { int x, int y ->
+            int n = noise(x, y, 1)
+            boolean vein = ((x + y * 2) % 9 == 0) || ((x * 3 + y) % 17 == 0)
+            argb(255, 38 + n, 84 + n * 2, 43 + n + (vein ? 18 : 0))
+        }
+
+        writeTexture('eldergrove_planks') { int x, int y ->
+            int n = noise(x, y, 2)
+            boolean seam = y == 3 || y == 7 || y == 11 || x == 0 || x == 15
+            boolean grain = (x + y + n) % 5 == 0
+            argb(255, 26 + n + (grain ? 7 : 0), 101 + n, 105 + n * 2 - (seam ? 18 : 0))
+        }
+
+        writeTexture('eldergrove_leaves') { int x, int y ->
+            int n = noise(x, y, 3)
+            boolean glint = ((x * 5 + y * 3) % 23 == 0)
+            argb(255, 55 + n + (glint ? 18 : 0), 104 + n * 2 + (glint ? 12 : 0), 72 + n + (glint ? 34 : 0))
+        }
+
+        writeTexture('silverwood_log') { int x, int y ->
+            int n = noise(x, y, 4)
+            boolean streak = x == 3 || x == 8 || x == 13 || ((x + y) % 11 == 0)
+            argb(255, 176 + n + (streak ? 18 : 0), 190 + n + (streak ? 12 : 0), 190 + n * 2 + (streak ? 18 : 0))
+        }
+
+        writeTexture('silverwood_log_top') { int x, int y ->
+            double dx = x - 7.5D
+            double dy = y - 7.5D
+            int ring = ((int) Math.floor(Math.sqrt(dx * dx + dy * dy) * 2.0D)) % 4
+            int n = noise(x, y, 5)
+            argb(255, 184 + n - ring * 8, 198 + n - ring * 6, 197 + n - ring * 3)
+        }
+
+        writeTexture('silverwood_leaves') { int x, int y ->
+            int n = noise(x, y, 6)
+            boolean pale = ((x * 2 + y * 5) % 19 == 0)
+            argb(255, 119 + n + (pale ? 20 : 0), 159 + n + (pale ? 14 : 0), 143 + n * 2 + (pale ? 22 : 0))
+        }
+
+        writeTexture('silverwood_core') { int x, int y ->
+            double dx = x - 7.5D
+            double dy = y - 7.5D
+            double dist = Math.sqrt(dx * dx + dy * dy)
+            int n = noise(x, y, 7)
+            boolean rune = x == 7 || x == 8 || y == 7 || y == 8 || ((x + y) % 7 == 0 && dist < 6.5D)
+            int glow = Math.max(0, 80 - (int) (dist * 10))
+            argb(255, 42 + n + (rune ? 55 : 0), 91 + n + glow + (rune ? 55 : 0), 96 + n + glow + (rune ? 70 : 0))
+        }
+    }
+}
+
 var generateModMetadata = tasks.register("generateModMetadata", ProcessResources) {
     var replaceProperties = [
             minecraft_version      : minecraft_version,
@@ -87,6 +169,10 @@ var generateModMetadata = tasks.register("generateModMetadata", ProcessResources
 
 sourceSets.main.resources.srcDir generateModMetadata
 neoForge.ideSyncTask generateModMetadata
+
+tasks.named('processResources').configure {
+    dependsOn(tasks.named('generateEldergroveTextures'))
+}
 
 tasks.withType(JavaCompile).configureEach {
     options.encoding = 'UTF-8'
