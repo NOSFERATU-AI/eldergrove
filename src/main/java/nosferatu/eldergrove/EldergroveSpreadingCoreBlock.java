@@ -9,9 +9,9 @@ import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 
 public class EldergroveSpreadingCoreBlock extends Block {
-    private static final int SPREAD_RADIUS = 18;
-    private static final int SPREAD_ATTEMPTS = 4;
-    private static final int TICK_DELAY = 100;
+    private static final int SPREAD_RADIUS = 10;
+    private static final int SPREAD_ATTEMPTS = 6;
+    private static final int TICK_DELAY = 60;
 
     public EldergroveSpreadingCoreBlock(Properties properties) {
         super(properties);
@@ -44,17 +44,30 @@ public class EldergroveSpreadingCoreBlock extends Block {
             );
 
             BlockState targetState = level.getBlockState(targetPos);
-            if (canBecomeEldergroveGrass(level, targetPos, targetState)) {
-                level.setBlock(targetPos, EldergroveBlocks.ELDERGROVE_GRASS.get().defaultBlockState(), 2);
+            BlockState nextState = getNextEldergroveGrassStage(level, targetPos, targetState);
+            if (nextState != null) {
+                level.setBlock(targetPos, nextState, 2);
             }
         }
     }
 
-    private static boolean canBecomeEldergroveGrass(ServerLevel level, BlockPos pos, BlockState state) {
-        if (!state.is(Blocks.GRASS_BLOCK) && !state.is(Blocks.PODZOL) && !state.is(Blocks.MYCELIUM)) {
-            return false;
+    private static BlockState getNextEldergroveGrassStage(ServerLevel level, BlockPos pos, BlockState state) {
+        if (level.getBlockState(pos.above()).isSolidRender(level, pos.above())) {
+            return null;
         }
 
-        return !level.getBlockState(pos.above()).isSolidRender(level, pos.above());
+        if (state.is(Blocks.GRASS_BLOCK) || state.is(Blocks.PODZOL) || state.is(Blocks.MYCELIUM)) {
+            return EldergroveBlocks.ELDERGROVE_GRASS_FAINT.get().defaultBlockState();
+        }
+
+        if (state.is(EldergroveBlocks.ELDERGROVE_GRASS_FAINT.get())) {
+            return EldergroveBlocks.ELDERGROVE_GRASS.get().defaultBlockState();
+        }
+
+        if (state.is(EldergroveBlocks.ELDERGROVE_GRASS.get())) {
+            return EldergroveBlocks.ELDERGROVE_GRASS_DEEP.get().defaultBlockState();
+        }
+
+        return null;
     }
 }
