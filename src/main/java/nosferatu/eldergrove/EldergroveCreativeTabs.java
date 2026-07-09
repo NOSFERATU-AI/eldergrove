@@ -21,7 +21,9 @@ public final class EldergroveCreativeTabs {
                     .withTabsBefore(CreativeModeTabs.SPAWN_EGGS)
                     .icon(() -> EldergroveItems.GROVE_HEART.get().getDefaultInstance())
                     .displayItems((parameters, output) -> {
+                        output.accept(EldergroveItems.ELDERGROVE_GRASS_FAINT.get());
                         output.accept(EldergroveItems.ELDERGROVE_GRASS.get());
+                        output.accept(EldergroveItems.ELDERGROVE_GRASS_DEEP.get());
                         output.accept(EldergroveItems.ELDERGROVE_MOSS.get());
                         output.accept(EldergroveItems.ELDERWOOD_LOG.get());
                         output.accept(EldergroveItems.ELDERWOOD_PLANKS.get());
