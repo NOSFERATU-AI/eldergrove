@@ -1,8 +1,10 @@
 {
-  "parent": "minecraft:block/cube_bottom_top",
+  "parent": "minecraft:block/grass_block",
   "textures": {
+    "particle": "minecraft:block/grass_block_side",
     "bottom": "minecraft:block/dirt",
-    "side": "eldergrove:block/eldergrove_grass_faint_side",
-    "top": "eldergrove:block/eldergrove_grass_faint_top"
+    "side": "minecraft:block/grass_block_side",
+    "top": "minecraft:block/grass_block_top",
+    "overlay": "minecraft:block/grass_block_side_overlay"
   }
 }
