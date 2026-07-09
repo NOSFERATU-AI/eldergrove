@@ -1,4 +1,6 @@
 {
   "itemGroup.eldergrove": "Eldergrove",
-  "item.eldergrove.heart_of_the_grove": "Сердце древней рощи"
+  "block.eldergrove.eldergrove_moss": "Мох древней рощи",
+  "block.eldergrove.eldergrove_planks": "Доски древней рощи",
+  "block.eldergrove.eldergrove_leaves": "Листва древней рощи"
 }
