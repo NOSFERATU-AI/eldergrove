@@ -98,22 +98,35 @@ tasks.register('generateEldergroveTextures') {
             ImageIO.write(image, 'png', file)
         }
 
-        writeTexture('eldergrove_grass_top') { int x, int y ->
-            int n = noise(x, y, 11)
-            boolean aura = ((x * 3 + y * 5) % 29 == 0)
-            boolean softPatch = ((x + y * 2) % 7 == 0)
-            argb(255, 35 + n + (aura ? 28 : 0), 92 + n * 2 + (softPatch ? 10 : 0), 72 + n + (aura ? 34 : 0))
-        }
-
-        writeTexture('eldergrove_grass_side') { int x, int y ->
-            int n = noise(x, y, 12)
-            if (y < 5) {
-                boolean aura = ((x * 5 + y * 7) % 31 == 0)
-                argb(255, 30 + n + (aura ? 18 : 0), 82 + n * 2, 64 + n + (aura ? 24 : 0))
-            } else {
-                argb(255, 78 + n, 59 + n, 40 + n)
+        def grassTop = { String name, int salt, int r, int g, int b, int auraR, int auraG, int auraB ->
+            writeTexture(name) { int x, int y ->
+                int n = noise(x, y, salt)
+                boolean aura = ((x * 3 + y * 5 + salt) % 29 == 0)
+                boolean softPatch = ((x + y * 2 + salt) % 7 == 0)
+                argb(255, r + n + (aura ? auraR : 0), g + n * 2 + (softPatch ? 8 : 0) + (aura ? auraG : 0), b + n + (aura ? auraB : 0))
             }
         }
+
+        def grassSide = { String name, int salt, int r, int g, int b ->
+            writeTexture(name) { int x, int y ->
+                int n = noise(x, y, salt)
+                if (y < 5) {
+                    boolean aura = ((x * 5 + y * 7 + salt) % 31 == 0)
+                    argb(255, r + n + (aura ? 14 : 0), g + n * 2, b + n + (aura ? 18 : 0))
+                } else {
+                    argb(255, 78 + n, 59 + n, 40 + n)
+                }
+            }
+        }
+
+        grassTop('eldergrove_grass_faint_top', 11, 49, 106, 62, 10, 10, 14)
+        grassSide('eldergrove_grass_faint_side', 12, 44, 92, 56)
+
+        grassTop('eldergrove_grass_top', 13, 37, 96, 76, 18, 16, 26)
+        grassSide('eldergrove_grass_side', 14, 34, 82, 66)
+
+        grassTop('eldergrove_grass_deep_top', 15, 25, 79, 87, 22, 24, 36)
+        grassSide('eldergrove_grass_deep_side', 16, 26, 70, 76)
 
         writeTexture('eldergrove_moss') { int x, int y ->
             int n = noise(x, y, 1)
