@@ -4,7 +4,6 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.util.RandomSource;
-import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.LeavesBlock;
 import net.minecraft.world.level.block.state.BlockState;
 
@@ -19,7 +18,7 @@ public final class EldergroveTreeGenerator {
             return false;
         }
 
-        strengthenSoil(level, origin);
+        refreshSoil(level, origin);
         placeCrown(level, origin, height, random);
         placeTrunk(level, origin, height, random);
 
@@ -107,15 +106,12 @@ public final class EldergroveTreeGenerator {
         }
     }
 
-    private static void strengthenSoil(ServerLevel level, BlockPos origin) {
+    private static void refreshSoil(ServerLevel level, BlockPos origin) {
         for (int x = -1; x <= 2; x++) {
             for (int z = -1; z <= 2; z++) {
                 BlockPos soilPos = origin.offset(x, -1, z);
                 BlockState soil = level.getBlockState(soilPos);
-                if (soil.is(Blocks.GRASS_BLOCK) || soil.is(Blocks.DIRT) || soil.is(EldergroveBlocks.ELDERGROVE_GRASS_FAINT.get())
-                        || soil.is(EldergroveBlocks.ELDERGROVE_GRASS.get()) || soil.is(EldergroveBlocks.ELDERGROVE_GRASS_DEEP.get())) {
-                    level.setBlock(soilPos, EldergroveBlocks.ELDERGROVE_GRASS_DEEP.get().defaultBlockState(), 2);
-                }
+                level.sendBlockUpdated(soilPos, soil, soil, 2);
             }
         }
     }
@@ -141,8 +137,7 @@ public final class EldergroveTreeGenerator {
     }
 
     private static boolean canSustainTree(BlockState state) {
-        return state.is(BlockTags.DIRT) || state.is(EldergroveBlocks.ELDERGROVE_GRASS_FAINT.get())
-                || state.is(EldergroveBlocks.ELDERGROVE_GRASS.get()) || state.is(EldergroveBlocks.ELDERGROVE_GRASS_DEEP.get());
+        return state.is(BlockTags.DIRT);
     }
 
     private static boolean canReplaceTreeSpace(ServerLevel level, BlockPos pos) {
