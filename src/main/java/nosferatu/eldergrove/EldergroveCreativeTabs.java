@@ -19,8 +19,12 @@ public final class EldergroveCreativeTabs {
             () -> CreativeModeTab.builder()
                     .title(Component.translatable("itemGroup.eldergrove"))
                     .withTabsBefore(CreativeModeTabs.SPAWN_EGGS)
-                    .icon(() -> EldergroveItems.HEART_OF_THE_GROVE.get().getDefaultInstance())
-                    .displayItems((parameters, output) -> output.accept(EldergroveItems.HEART_OF_THE_GROVE.get()))
+                    .icon(() -> EldergroveItems.ELDERGROVE_MOSS.get().getDefaultInstance())
+                    .displayItems((parameters, output) -> {
+                        output.accept(EldergroveItems.ELDERGROVE_MOSS.get());
+                        output.accept(EldergroveItems.ELDERGROVE_PLANKS.get());
+                        output.accept(EldergroveItems.ELDERGROVE_LEAVES.get());
+                    })
                     .build()
     );
 
