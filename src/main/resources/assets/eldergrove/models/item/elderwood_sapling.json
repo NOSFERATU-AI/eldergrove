@@ -1,3 +1,6 @@
 {
-  "parent": "eldergrove:block/elderwood_sapling"
+  "parent": "minecraft:item/generated",
+  "textures": {
+    "layer0": "eldergrove:block/elderwood_sapling"
+  }
 }
