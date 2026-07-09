@@ -1,0 +1,6 @@
+{
+  "parent": "minecraft:block/leaves",
+  "textures": {
+    "all": "eldergrove:block/elderwood_leaves"
+  }
+}
