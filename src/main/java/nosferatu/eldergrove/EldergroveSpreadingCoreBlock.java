@@ -9,9 +9,9 @@ import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 
 public class EldergroveSpreadingCoreBlock extends Block {
-    private static final int SPREAD_RADIUS = 12;
-    private static final int SPREAD_ATTEMPTS = 24;
-    private static final int TICK_DELAY = 40;
+    private static final int SPREAD_RADIUS = 18;
+    private static final int SPREAD_ATTEMPTS = 4;
+    private static final int TICK_DELAY = 100;
 
     public EldergroveSpreadingCoreBlock(Properties properties) {
         super(properties);
@@ -39,37 +39,27 @@ public class EldergroveSpreadingCoreBlock extends Block {
         for (int i = 0; i < SPREAD_ATTEMPTS; i++) {
             BlockPos targetPos = pos.offset(
                     random.nextInt(SPREAD_RADIUS * 2 + 1) - SPREAD_RADIUS,
-                    random.nextInt(7) - 3,
+                    random.nextInt(5) - 2,
                     random.nextInt(SPREAD_RADIUS * 2 + 1) - SPREAD_RADIUS
             );
 
             BlockState targetState = level.getBlockState(targetPos);
-            if (canBecomeEldergroveMoss(targetState)) {
-                level.setBlock(targetPos, EldergroveBlocks.ELDERGROVE_MOSS.get().defaultBlockState(), 3);
-            } else if (canBecomeElderwoodLeaves(targetState)) {
-                level.setBlock(targetPos, EldergroveBlocks.ELDERWOOD_LEAVES.get().defaultBlockState(), 3);
+            if (canBecomeEldergroveGrass(level, targetPos, targetState)) {
+                level.setBlock(targetPos, EldergroveBlocks.ELDERGROVE_GRASS.get().defaultBlockState(), 2);
             }
         }
     }
 
-    private static boolean canBecomeEldergroveMoss(BlockState state) {
-        return state.is(Blocks.GRASS_BLOCK)
-                || state.is(Blocks.DIRT)
-                || state.is(Blocks.ROOTED_DIRT)
-                || state.is(Blocks.COARSE_DIRT)
-                || state.is(Blocks.PODZOL)
-                || state.is(Blocks.MYCELIUM)
-                || state.is(Blocks.MOSS_BLOCK);
-    }
+    private static boolean canBecomeEldergroveGrass(ServerLevel level, BlockPos pos, BlockState state) {
+        if (!state.is(Blocks.GRASS_BLOCK) && !state.is(Blocks.PODZOL) && !state.is(Blocks.MYCELIUM)) {
+            return false;
+        }
 
-    private static boolean canBecomeElderwoodLeaves(BlockState state) {
-        return state.is(Blocks.OAK_LEAVES)
-                || state.is(Blocks.BIRCH_LEAVES)
-                || state.is(Blocks.SPRUCE_LEAVES)
-                || state.is(Blocks.JUNGLE_LEAVES)
-                || state.is(Blocks.ACACIA_LEAVES)
-                || state.is(Blocks.DARK_OAK_LEAVES)
-                || state.is(Blocks.AZALEA_LEAVES)
-                || state.is(Blocks.FLOWERING_AZALEA_LEAVES);
+        BlockState below = level.getBlockState(pos.below());
+        if (below.is(Blocks.GRASS_BLOCK) || below.is(Blocks.DIRT) || below.is(Blocks.STONE) || below.is(EldergroveBlocks.ELDERGROVE_GRASS.get())) {
+            return false;
+        }
+
+        return !level.getBlockState(pos.above()).isSolidRender(level, pos.above());
     }
 }
