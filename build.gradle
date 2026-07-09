@@ -98,6 +98,23 @@ tasks.register('generateEldergroveTextures') {
             ImageIO.write(image, 'png', file)
         }
 
+        writeTexture('eldergrove_grass_top') { int x, int y ->
+            int n = noise(x, y, 11)
+            boolean aura = ((x * 3 + y * 5) % 29 == 0)
+            boolean softPatch = ((x + y * 2) % 7 == 0)
+            argb(255, 35 + n + (aura ? 28 : 0), 92 + n * 2 + (softPatch ? 10 : 0), 72 + n + (aura ? 34 : 0))
+        }
+
+        writeTexture('eldergrove_grass_side') { int x, int y ->
+            int n = noise(x, y, 12)
+            if (y < 5) {
+                boolean aura = ((x * 5 + y * 7) % 31 == 0)
+                argb(255, 30 + n + (aura ? 18 : 0), 82 + n * 2, 64 + n + (aura ? 24 : 0))
+            } else {
+                argb(255, 78 + n, 59 + n, 40 + n)
+            }
+        }
+
         writeTexture('eldergrove_moss') { int x, int y ->
             int n = noise(x, y, 1)
             boolean deep = ((x * 2 + y * 3) % 11 == 0)
