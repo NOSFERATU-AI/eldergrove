@@ -2,10 +2,11 @@ package nosferatu.eldergrove;
 
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
-import net.minecraft.world.level.block.BushBlock;
 import net.minecraft.world.level.block.LeavesBlock;
 import net.minecraft.world.level.block.RotatedPillarBlock;
+import net.minecraft.world.level.block.SaplingBlock;
 import net.minecraft.world.level.block.SoundType;
+import net.minecraft.world.level.block.grower.TreeGrower;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.material.MapColor;
 import net.neoforged.bus.api.IEventBus;
@@ -74,9 +75,10 @@ public final class EldergroveBlocks {
             )
     );
 
-    public static final DeferredBlock<BushBlock> ELDERWOOD_SAPLING = BLOCKS.register(
+    public static final DeferredBlock<SaplingBlock> ELDERWOOD_SAPLING = BLOCKS.register(
             "elderwood_sapling",
-            () -> new BushBlock(
+            () -> new SaplingBlock(
+                    TreeGrower.OAK,
                     BlockBehaviour.Properties.ofFullCopy(Blocks.OAK_SAPLING)
                             .mapColor(MapColor.COLOR_CYAN)
                             .noOcclusion()
