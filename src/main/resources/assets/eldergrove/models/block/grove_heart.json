@@ -1,6 +1,7 @@
 {
-  "parent": "minecraft:block/cube_all",
+  "parent": "minecraft:block/cube_column",
   "textures": {
-    "all": "eldergrove:block/grove_heart"
+    "end": "eldergrove:block/grove_heart_top",
+    "side": "eldergrove:block/grove_heart"
   }
 }
