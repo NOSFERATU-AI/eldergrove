@@ -9,9 +9,10 @@ import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 
 public class EldergroveSpreadingCoreBlock extends Block {
-    private static final int SPREAD_RADIUS = 10;
-    private static final int SPREAD_ATTEMPTS = 6;
-    private static final int TICK_DELAY = 60;
+    private static final int SPREAD_RADIUS = 8;
+    private static final int SPREAD_ATTEMPTS = 2;
+    private static final int TICK_DELAY = 50;
+    private static final int SURFACE_SEARCH_RANGE = 8;
 
     public EldergroveSpreadingCoreBlock(Properties properties) {
         super(properties);
@@ -37,25 +38,41 @@ public class EldergroveSpreadingCoreBlock extends Block {
 
     private static void spread(ServerLevel level, BlockPos pos, RandomSource random) {
         for (int i = 0; i < SPREAD_ATTEMPTS; i++) {
-            BlockPos targetPos = pos.offset(
-                    random.nextInt(SPREAD_RADIUS * 2 + 1) - SPREAD_RADIUS,
-                    random.nextInt(5) - 2,
-                    random.nextInt(SPREAD_RADIUS * 2 + 1) - SPREAD_RADIUS
+            BlockPos targetColumn = pos.offset(
+                    random.nextInt(SPREAD_RADIUS) - random.nextInt(SPREAD_RADIUS),
+                    0,
+                    random.nextInt(SPREAD_RADIUS) - random.nextInt(SPREAD_RADIUS)
             );
 
+            BlockPos targetPos = findSurfaceGrass(level, targetColumn, pos.getY());
+            if (targetPos == null) {
+                continue;
+            }
+
             BlockState targetState = level.getBlockState(targetPos);
-            BlockState nextState = getNextEldergroveGrassStage(level, targetPos, targetState);
+            BlockState nextState = getNextEldergroveGrassStage(targetState);
             if (nextState != null) {
                 level.setBlock(targetPos, nextState, 2);
             }
         }
     }
 
-    private static BlockState getNextEldergroveGrassStage(ServerLevel level, BlockPos pos, BlockState state) {
-        if (level.getBlockState(pos.above()).isSolidRender(level, pos.above())) {
-            return null;
+    private static BlockPos findSurfaceGrass(ServerLevel level, BlockPos columnPos, int centerY) {
+        int minY = Math.max(level.getMinBuildHeight(), centerY - SURFACE_SEARCH_RANGE);
+        int maxY = Math.min(level.getMaxBuildHeight() - 1, centerY + SURFACE_SEARCH_RANGE);
+
+        for (int y = maxY; y >= minY; y--) {
+            BlockPos pos = new BlockPos(columnPos.getX(), y, columnPos.getZ());
+            BlockState state = level.getBlockState(pos);
+            if (canAdvanceGrass(state) && !level.getBlockState(pos.above()).isSolidRender(level, pos.above())) {
+                return pos;
+            }
         }
 
+        return null;
+    }
+
+    private static BlockState getNextEldergroveGrassStage(BlockState state) {
         if (state.is(Blocks.GRASS_BLOCK) || state.is(Blocks.PODZOL) || state.is(Blocks.MYCELIUM)) {
             return EldergroveBlocks.ELDERGROVE_GRASS_FAINT.get().defaultBlockState();
         }
@@ -69,5 +86,13 @@ public class EldergroveSpreadingCoreBlock extends Block {
         }
 
         return null;
+    }
+
+    private static boolean canAdvanceGrass(BlockState state) {
+        return state.is(Blocks.GRASS_BLOCK)
+                || state.is(Blocks.PODZOL)
+                || state.is(Blocks.MYCELIUM)
+                || state.is(EldergroveBlocks.ELDERGROVE_GRASS_FAINT.get())
+                || state.is(EldergroveBlocks.ELDERGROVE_GRASS.get());
     }
 }
