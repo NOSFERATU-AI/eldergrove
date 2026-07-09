@@ -55,11 +55,6 @@ public class EldergroveSpreadingCoreBlock extends Block {
             return false;
         }
 
-        BlockState below = level.getBlockState(pos.below());
-        if (below.is(Blocks.GRASS_BLOCK) || below.is(Blocks.DIRT) || below.is(Blocks.STONE) || below.is(EldergroveBlocks.ELDERGROVE_GRASS.get())) {
-            return false;
-        }
-
         return !level.getBlockState(pos.above()).isSolidRender(level, pos.above());
     }
 }
