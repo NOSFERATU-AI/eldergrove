@@ -19,14 +19,13 @@ public final class EldergroveCreativeTabs {
             () -> CreativeModeTab.builder()
                     .title(Component.translatable("itemGroup.eldergrove"))
                     .withTabsBefore(CreativeModeTabs.SPAWN_EGGS)
-                    .icon(() -> EldergroveItems.SILVERWOOD_CORE.get().getDefaultInstance())
+                    .icon(() -> EldergroveItems.GROVE_HEART.get().getDefaultInstance())
                     .displayItems((parameters, output) -> {
                         output.accept(EldergroveItems.ELDERGROVE_MOSS.get());
-                        output.accept(EldergroveItems.ELDERGROVE_PLANKS.get());
-                        output.accept(EldergroveItems.ELDERGROVE_LEAVES.get());
-                        output.accept(EldergroveItems.SILVERWOOD_LOG.get());
-                        output.accept(EldergroveItems.SILVERWOOD_LEAVES.get());
-                        output.accept(EldergroveItems.SILVERWOOD_CORE.get());
+                        output.accept(EldergroveItems.ELDERWOOD_LOG.get());
+                        output.accept(EldergroveItems.ELDERWOOD_PLANKS.get());
+                        output.accept(EldergroveItems.ELDERWOOD_LEAVES.get());
+                        output.accept(EldergroveItems.GROVE_HEART.get());
                     })
                     .build()
     );
