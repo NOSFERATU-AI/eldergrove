@@ -13,29 +13,24 @@ public final class EldergroveItems {
             EldergroveBlocks.ELDERGROVE_MOSS
     );
 
-    public static final DeferredItem<BlockItem> ELDERGROVE_PLANKS = ITEMS.registerSimpleBlockItem(
-            "eldergrove_planks",
-            EldergroveBlocks.ELDERGROVE_PLANKS
+    public static final DeferredItem<BlockItem> ELDERWOOD_PLANKS = ITEMS.registerSimpleBlockItem(
+            "elderwood_planks",
+            EldergroveBlocks.ELDERWOOD_PLANKS
     );
 
-    public static final DeferredItem<BlockItem> ELDERGROVE_LEAVES = ITEMS.registerSimpleBlockItem(
-            "eldergrove_leaves",
-            EldergroveBlocks.ELDERGROVE_LEAVES
+    public static final DeferredItem<BlockItem> ELDERWOOD_LOG = ITEMS.registerSimpleBlockItem(
+            "elderwood_log",
+            EldergroveBlocks.ELDERWOOD_LOG
     );
 
-    public static final DeferredItem<BlockItem> SILVERWOOD_LOG = ITEMS.registerSimpleBlockItem(
-            "silverwood_log",
-            EldergroveBlocks.SILVERWOOD_LOG
+    public static final DeferredItem<BlockItem> ELDERWOOD_LEAVES = ITEMS.registerSimpleBlockItem(
+            "elderwood_leaves",
+            EldergroveBlocks.ELDERWOOD_LEAVES
     );
 
-    public static final DeferredItem<BlockItem> SILVERWOOD_LEAVES = ITEMS.registerSimpleBlockItem(
-            "silverwood_leaves",
-            EldergroveBlocks.SILVERWOOD_LEAVES
-    );
-
-    public static final DeferredItem<BlockItem> SILVERWOOD_CORE = ITEMS.registerSimpleBlockItem(
-            "silverwood_core",
-            EldergroveBlocks.SILVERWOOD_CORE
+    public static final DeferredItem<BlockItem> GROVE_HEART = ITEMS.registerSimpleBlockItem(
+            "grove_heart",
+            EldergroveBlocks.GROVE_HEART
     );
 
     private EldergroveItems() {
