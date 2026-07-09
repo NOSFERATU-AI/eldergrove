@@ -2,6 +2,7 @@ package nosferatu.eldergrove;
 
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.BushBlock;
 import net.minecraft.world.level.block.LeavesBlock;
 import net.minecraft.world.level.block.RotatedPillarBlock;
 import net.minecraft.world.level.block.SoundType;
@@ -70,6 +71,15 @@ public final class EldergroveBlocks {
                     BlockBehaviour.Properties.ofFullCopy(Blocks.OAK_LEAVES)
                             .mapColor(MapColor.COLOR_CYAN)
                             .sound(SoundType.AZALEA_LEAVES)
+            )
+    );
+
+    public static final DeferredBlock<BushBlock> ELDERWOOD_SAPLING = BLOCKS.register(
+            "elderwood_sapling",
+            () -> new BushBlock(
+                    BlockBehaviour.Properties.ofFullCopy(Blocks.OAK_SAPLING)
+                            .mapColor(MapColor.COLOR_CYAN)
+                            .noOcclusion()
             )
     );
 
