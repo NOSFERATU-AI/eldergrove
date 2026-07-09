@@ -8,9 +8,19 @@ import net.neoforged.neoforge.registries.DeferredRegister;
 public final class EldergroveItems {
     public static final DeferredRegister.Items ITEMS = DeferredRegister.createItems(Eldergrove.MODID);
 
+    public static final DeferredItem<BlockItem> ELDERGROVE_GRASS_FAINT = ITEMS.registerSimpleBlockItem(
+            "eldergrove_grass_faint",
+            EldergroveBlocks.ELDERGROVE_GRASS_FAINT
+    );
+
     public static final DeferredItem<BlockItem> ELDERGROVE_GRASS = ITEMS.registerSimpleBlockItem(
             "eldergrove_grass",
             EldergroveBlocks.ELDERGROVE_GRASS
+    );
+
+    public static final DeferredItem<BlockItem> ELDERGROVE_GRASS_DEEP = ITEMS.registerSimpleBlockItem(
+            "eldergrove_grass_deep",
+            EldergroveBlocks.ELDERGROVE_GRASS_DEEP
     );
 
     public static final DeferredItem<BlockItem> ELDERGROVE_MOSS = ITEMS.registerSimpleBlockItem(
