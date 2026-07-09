@@ -1,6 +1,8 @@
 {
   "replace": false,
   "values": [
-    "eldergrove:eldergrove_grass"
+    "eldergrove:eldergrove_grass_faint",
+    "eldergrove:eldergrove_grass",
+    "eldergrove:eldergrove_grass_deep"
   ]
 }
