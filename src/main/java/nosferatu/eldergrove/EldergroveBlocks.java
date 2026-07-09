@@ -55,6 +55,17 @@ public final class EldergroveBlocks {
             )
     );
 
+    public static final DeferredBlock<Block> SILVERWOOD_CORE = BLOCKS.register(
+            "silverwood_core",
+            () -> new EldergroveSpreadingCoreBlock(
+                    BlockBehaviour.Properties.ofFullCopy(Blocks.ROOTED_DIRT)
+                            .mapColor(MapColor.COLOR_PURPLE)
+                            .sound(SoundType.WOOD)
+                            .lightLevel(state -> 9)
+                            .randomTicks()
+            )
+    );
+
     private EldergroveBlocks() {
     }
 
