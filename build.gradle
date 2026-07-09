@@ -7,6 +7,7 @@ plugins {
 
 import java.awt.image.BufferedImage
 import javax.imageio.ImageIO
+import java.util.Base64
 
 version = mod_version
 group = mod_group_id
@@ -97,6 +98,11 @@ tasks.register('generateEldergroveTextures') {
             }
             ImageIO.write(image, 'png', file)
         }
+        def writePngAsset = { String name, String encoded ->
+            File file = new File(root, "assets/eldergrove/textures/block/${name}.png")
+            file.parentFile.mkdirs()
+            file.bytes = Base64.getDecoder().decode(encoded)
+        }
 
         def grassTop = { String name, int salt, int r, int g, int b, int auraR, int auraG, int auraB ->
             writeTexture(name) { int x, int y ->
@@ -135,46 +141,15 @@ tasks.register('generateEldergroveTextures') {
             argb(255, 22 + n + (glow ? 18 : 0), 64 + n * 2 + (glow ? 26 : 0), 43 + n + (deep ? 18 : 0) + (glow ? 36 : 0))
         }
 
-        writeTexture('elderwood_planks') { int x, int y ->
-            int n = noise(x, y, 2)
-            boolean seam = y == 3 || y == 7 || y == 11 || x == 0 || x == 15
-            boolean grain = (x + y + n) % 5 == 0
-            argb(255, 34 + n + (grain ? 8 : 0), 76 + n - (seam ? 12 : 0), 71 + n * 2 - (seam ? 14 : 0))
-        }
-
-        writeTexture('elderwood_log') { int x, int y ->
-            int n = noise(x, y, 4)
-            boolean paleStreak = x == 2 || x == 7 || x == 12 || ((x + y) % 13 == 0)
-            boolean darkCrack = ((x * 3 + y) % 17 == 0)
-            argb(255, 154 + n + (paleStreak ? 33 : 0) - (darkCrack ? 26 : 0), 180 + n + (paleStreak ? 20 : 0) - (darkCrack ? 18 : 0), 175 + n * 2 + (paleStreak ? 26 : 0) - (darkCrack ? 12 : 0))
-        }
-
-        writeTexture('elderwood_log_top') { int x, int y ->
-            double dx = x - 7.5D
-            double dy = y - 7.5D
-            int ring = ((int) Math.floor(Math.sqrt(dx * dx + dy * dy) * 2.2D)) % 4
-            int n = noise(x, y, 5)
-            boolean glowRing = ring == 0 && ((x + y) % 3 == 0)
-            argb(255, 172 + n - ring * 7 + (glowRing ? 20 : 0), 193 + n - ring * 5 + (glowRing ? 12 : 0), 190 + n - ring * 2 + (glowRing ? 18 : 0))
-        }
-
-        writeTexture('elderwood_leaves') { int x, int y ->
-            int n = noise(x, y, 6)
-            boolean pale = ((x * 2 + y * 5) % 19 == 0)
-            boolean blueGlow = ((x * 7 + y * 11) % 43 == 0)
-            argb(255, 70 + n + (pale ? 30 : 0), 128 + n + (pale ? 32 : 0) + (blueGlow ? 18 : 0), 105 + n * 2 + (pale ? 40 : 0) + (blueGlow ? 44 : 0))
-        }
-
-        writeTexture('grove_heart') { int x, int y ->
-            double dx = x - 7.5D
-            double dy = y - 7.5D
-            double dist = Math.sqrt(dx * dx + dy * dy)
-            int n = noise(x, y, 7)
-            boolean cross = x == 7 || x == 8 || y == 7 || y == 8
-            boolean rune = cross || (((x + y) % 6 == 0 || (x * 2 - y) % 7 == 0) && dist < 6.5D)
-            int glow = Math.max(0, 95 - (int) (dist * 11))
-            argb(255, 26 + n + (rune ? 55 : 0), 86 + n + glow + (rune ? 52 : 0), 92 + n + glow + (rune ? 78 : 0))
-        }
+        [
+                elderwood_log      : 'iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAIAAACQkWg2AAAALHRFWHRDcmVhdGlvbiBUaW1lAFR1ZSAxOSBNYXIgMjAxMyAxMzo1NjoxOSArMDIwMF3DX+YAAAAHdElNRQfdAxMLOB/xunkfAAAACXBIWXMAAB7BAAAewQHDaVRTAAAABGdBTUEAALGPC/xhBQAAAqBJREFUeNoVksluE0EURbuGHsvd7XacxLEdO4lBKLAJe7JH4jvIbyD+JAJCdixYsIMfQChIBClCkNFO7PYUu4fqoQYqtaknvdKpd+994OjwbVmy3qOnGHsrq42yyDE2dF2fzadCMM91aRpJyQGQl+enqgsnk9g2LV23HGJnVPXk2Z+zz58/jcOxAlFKpYYwxuNwZFuEMaZqqS7OSgQhqQRSartPdoNqdRwOS5aNyqLV2shoXq0G/f791c0EC1YCZGQ5S4cjy1zU6muOTVqtdqvVUhTFKnKacaZpQhO542C41W3HUSRFbpp6GI5Ho6GQPInjPKPq8fCun6YxqXgAIEJIb3sTAgAf97oQArdCtra3iEM0qVmWhXVjuYzevT++uu4zVoZhWPUC36thLh6O5/mGYVq2j7AuhaBZNuj3o2h5cPBaijJNlkIUl9eh7xGsaaBkpRBc+cN5meX029cvWcYrFW9v7/l0NjUNnCYR0GDJ+Gweo1cv96+uR99/nK7U6/XVhnKt091RlWUaftW3LcN1CUYoz1OgFUma4fpK1TCsF/v7hNTSJFksF47jbDSazWYLAhjHSzWS65HRiC4Ws8Z6Ey6jRS0gRZbf3t4IXvq+71Y8qQYFiNJsMLhTOAjQznav3e4owVhwOJ0teisdpGsAAiVd141cmUpTzlm9HkwmoWGA+3kYRQ+pw6KgOpKsSDASamGkUBRumrZlmcSpCKko6PKyr6yDSJtOxzDPE7Vqv37/nc3nKhOIcBxHZVlgZNKMfvxwdPLzRNN4EKzWqgGxATg+fKMi3Ow8w6btOAHj/OL8fDIN1U/d7pZlm57rDYeD/s1Fc80tiqUK1GYM0jz1LTdNE7WG6+trm522EJpKXemJ4oVj251Ou6D3/86H/wHCgYaKhVzXIQAAAABJRU5ErkJggg==',
+                elderwood_log_top  : 'iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAIAAACQkWg2AAAALHRFWHRDcmVhdGlvbiBUaW1lAFR1ZSAxOSBNYXIgMjAxMyAxMzo1NjozNiArMDIwMOmuKHIAAAAHdElNRQfdAxMLOCxOahgJAAAACXBIWXMAAB7BAAAewQHDaVRTAAAABGdBTUEAALGPC/xhBQAAAt9JREFUeNoVkslvE1cAxt+82TIez2LHjseOs+HQLCRshURtr20PFRwRUVUh9cL/0b+DC4f2UHHgwoELiroIEELQQJYmJo5jJzGONzxvtrfMG8z5O3y/76dP+OPhb5SyyvyyJJnjeYcSLEmKLMv9QY9zZhpGGKAkiQUhqde2v6TdrudM2L8/+DNfcLRUSpLVbrfb6bQdp6RpY7IsMcoIDk8ajY17t8LAF2//9O3Tx5sXp/L5nL66POO551OTxZlJmwTuZLlI0PnNtXVF5EGv+e/zbTWtQ86oYVvl2dLC8sKrFy9kgZZyQs4ES4tFiQ+WFkvvXj8rlCsr19dN8wuBNDtT/u/1vm1qz//avLq+tnL5ylH1YExSJ7JOShsjGHXarf2tf6amK4aRrsxNQUGAJWfCsHOaPgZi0qzunR7XCGGNw/8pIQjhK1+vQRlT4htpwzKzMOY8GVlg3LDG55cuoyCMQtdIqxEOawc7Rwd7aSsb4zhmUW/Q930XAiDEPI4opWEUDDsxUFbXvy+UFwCAueK0pCouQppmRwzEMe8PPOii8KzVA0nCk/joQ+PCV/MxJoZhT88teF4oiTIUIRRF2xgpFiOMpdy4nbEtRVbtXCY7btb2tlv1DwIgHuqf1k9KpUlNMzEJRZgNQ9+ZyI4ahqmUIkkClEUrawogceZmDw92dF1XVSXhdNA59pEbAzGTyY4GQx5D1/UCL/IG0dbb9yvXr+XyFyqXbjJKLy4tVlavfmy1KUvSZsb3IkwAJCRklJydHGspw/fYUbU6Qg5RJAvQdz9V37/berN745vvXv69SSjp9ToSxr6HgtphvVhmlpXa2TmxMl6AkABw2iqct5o/3N549uSRYZjkbKhrgvjz3R+v3bi0u9cWlDQXrQSqjeb5abvb7gURHr1UbZ62+y7e3a//ev+OqkJJVjTG4C/3NyyrwBPIYgYSoKgK50BP6bKsIG+Ihr0ockn46bD28TO/g4eIBtZPLAAAAABJRU5ErkJggg==',
+                elderwood_leaves   : 'iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAALHRFWHRDcmVhdGlvbiBUaW1lAFR1ZSAxOSBNYXIgMjAxMyAxMzo1Nzo0MyArMDIwMF6RZfIAAAAHdElNRQfdAxMLOgxHMlpDAAAACXBIWXMAAB7BAAAewQHDaVRTAAAABGdBTUEAALGPC/xhBQAAAuNJREFUeNplU1tIVFEU3ec6PiYxxawkCkLU0grtw49QS5scy7IMQX9CTAhULMtKwiStDDWzGulBUH32Y2CDj0QzxUhRUUfN50zjA3UGp3moM857Tvecy71RnZ+799pnr/0460JmRR8G9pS8UuCc6gEcnXaP+vyJz5f/5ZNzUHqHYsUvRjGjN1koGBLoCzaHB6baHqADKbeFJL26H8KTrlK/7O0ELn/3A7tdVhprl38AUY8sBRGnd1wH7bXHUYTkBj6feQn0KVn4fWkciku6CEEBPtAdsBu7PRgmlzZA+VWGSt+MY7vTDQxfiSSTr7LrGSIXF7SbFA/e7gNrRhvYzGvgYXGz1UFxl9sDWoONI7hcO4hzawaFts02FyyPtVBbo7eBYdMBqu4GVJcfgxiGq6lcMYPOZOUIdgb5wfyqiQbCk6/heY0FvMVB1Ff0NkIwOwJdXmoZ7qw7gaLTKnDzowTkdLDdRJ66hS+Uf6fVI04W46jTd6md93gIFzwfFrqKyawX7EhJCY46U44Pna3EogRpNuzbtQ3kbECSnsN24wsfAfAOdvapxQ2aUCgbwXtDxGBd1+C5L0/orqY/V6EjGTVYtD/UH/omf9GL62YnndnjdoBaYxHefUVnhUWtBfjk3LwrMC3JxkM9TcB8m9CBaqCRm7evBbbsLpjtrEMiLwSt1YmIiEZeFY+8RYwgojWTHYxssZmOGgSH06v+U1pYYoGwi6KGEUwUx8cInnW//08OkTD/JSr7l4zgfAIhSiru5BbOCo6QMwqVgV709faCuWVOPNdfKjCRLbGfFsYinWmL4gvaLRCL/ajN6hnsTg+I/MXcG8ubGiEsVkptsocJtVHoYnm8RbCV7L5uvh7DRImyoqOIWZoZpAHyE6kVHUDednbBAF31yYhPEgfuoRpBLEIU6cMu9Oeqhe6DiTuWKLATksnWShQaEsAJhhUZmTtVKgWEvODTw3hKOqoygmq4Dc5lZMFvoOFqW5r/c+wAAAAASUVORK5CYII=',
+                elderwood_sapling  : 'iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAALHRFWHRDcmVhdGlvbiBUaW1lAFR1ZSAxOSBNYXIgMjAxMyAxNDoxMToxMiArMDIwMHCyZb8AAAAHdElNRQfdAxMMCxie+p8JAAAACXBIWXMAAB7BAAAewQHDaVRTAAAABGdBTUEAALGPC/xhBQAAAedJREFUeNpjYCAAxBY+/I9PngmfpIpD2n/Tq18ZVIMn/ifNAJ86sIY7B2Yx/mZlYZBTsGTQT9r8X6h2P4ZBLOgCSn7t/928ShiOcEj9Z/rxjOH729sM/xmYGUT5eRk+fXvC8A5NPSM2B9imLvnPJ2HJ8OXLe4bPb+8zcDL/ZDg6PwarWqyCIMDvk/RfmUWd4e03ZgYhYRGG35+fMFzZUoOhHsMLLkVr/3/+8Jbh5Lw0xnPhc/9L6UkySP+TYvjNYMJw5cnt/wwXFjLiNIAPqNlIz5Hh94/PDGamG/6f//aPQePnMQZD9icMM745MqBrxuoFya5d/zV5vzBEi9xm4P78lkGQ7SvDty8/GQIz5jAqB/X8f/eDleH9tnxGnAbAQE2Ox38rE0WG+4xyDG/vXGW4+12a4SFbAsNvViaGo43qOPWhgOzm0v9yU879Z3CpAce/bEYz4XQAVuja/J/X0pBBR+clw7G3kgxaSloMO4Dij2fUYtiMNSX++M/CYG9pxCDF/IJB5MURhiNHtuN0JVYDXu+pZHx47RDD7TesDB9ubGX4cm0xI0kGgIDEy6MMzH++M0RayTMUl6bjzEwYJk+eXPs/MMiL4cLJIwzPnz9ieP/xE4OsojKDsJg0w8f3vxhCQzJR9AAAWAewRavWElUAAAAASUVORK5CYII=',
+                elderwood_planks   : 'iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAIAAACQkWg2AAAALHRFWHRDcmVhdGlvbiBUaW1lAE1vbiAxNCBPY3QgMjAxMyAyMjoxNzoxMCArMDIwMOThfBEAAAAHdElNRQfdCg4UGjaso64tAAAACXBIWXMAAB7CAAAewgFu0HU+AAAABGdBTUEAALGPC/xhBQAAAtxJREFUeNodUtlOU1EUvffcsS23FSjSCAgEIQrYMBYoUy0goCJG8YFnEz/J+GB8kOD0ADSKxCLIIEIbUsukTRMGpczQkbb33Ol44OUkZ+29dtZae5Nrfrdeb1I0KXZ2mptXvB1Y0QvG/KKbicQpTCbNlsLQToAgiPyiW9t/fHqTifR5XJ7ZOd6ga2zrJhDaDPxSZVlTFA1pFMPSDJuZnUMx9PovnwylxjtOOp1K83qd8/7A7lbw7OBfjb1HFBPZ5oLzVBimkgAwa94Zg0no6n/6dfQDRdOA5fjaFkf4+Og8Gr5d3+ZbmlzxzgOGSadji9MTfs9sVVNnMho/2d+11tZhbQBpaiIa2dsOWOsdfs9cPBK1NrQTSOVoobbFCWHKOz9RZe862Nk63Nk0GDJB+PgwenJQUdO6MPUpEY+23H0UjxwihGcRmqb2PnlGkvTygru8tlWUZFVVAC7IECqaIqbOHT2Pg+tLF4gEL/E0fps7+iRJ5HhegiKFTVwWREHIanDcUzUVk/WGKyNDL0iSrG9pw1Wa4SprmjWkkiSRTEaAkJmdEiFBEpGzfYphFFnmOB2gAUKI1xsR0hQZqoqCmRBKeBzIsVxnWBZnH9xYwei14lJZgf2Dzx29DzOELIzEY6cb/iWkEtqFKwXoDEaWZRmO1+n0c19G8ZpxE0kC3Idx7NLvmaEoigQU/iqKAjjOUHCj7Pv4uyZHH80yq4s/GIbFHENGJt70lGsYk9u7Bz5/fI3da9JlShmCqayienr8vfPBIMvz3hk3dgzTKffYGxWp1Y0drrcvmxzdFMUyPHdB+Dk9acrKLSkv/+YasrX2WG12HLEkp+vsnRXVtln3SGl5pTk3b35y7ELtXui3a/gVAJTd2aEqEj4ynBjSNEJTEUlhPdZ6mwTh6rJXEmFdczMZ+ruxHwoKRvPR3paloDARixqzsnU602Fo03w1H5+OLMNkLGbJLwmueXEk/wGaWW2G/6VUvAAAAABJRU5ErkJggg==',
+                grove_heart        : 'iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAIAAACQkWg2AAAALHRFWHRDcmVhdGlvbiBUaW1lAFR1ZSAxOSBNYXIgMjAxMyAxMzo1NjoxOSArMDIwMF3DX+YAAAAHdElNRQfdBx8OCzFgmspzAAAACXBIWXMAAB7BAAAewQHDaVRTAAAABGdBTUEAALGPC/xhBQAAArFJREFUeNoVktlu1DAUhhPHWd1ss3WYvQyoLZV6BUIsvUMCqRJvQV8D8SaI9Y6LXlXiAbhACCSKVGg73YY2yeydTJzFsTG+OZaP9J/j7//F969fZRnp3roDoVUsV7M0gVCRZXk8GVFKLNPE0ZyxXBTZaW+fd8FwGOqqJsuagfQY8x47+HOwu/tpEAy4EMaYCRKEcBD4uoYIIfzOeMlJJgGAllzGhPXVdddxBoGXkdjP0nr9RowTx3H7/enZxRBSkomSEick8nxNnRVKFUNH9XqjXq9zFa6VJjjOiSBQgSaGAWGn3bjyJ5VKomp2v395fHJuWrbABP6u64p3dalpqmlafFuEUHelCUUR3O62GRDNJSSr6lHvfHb927EdIAHHQm/efnz69Mna6q0gCEqOm2YpzOn/Y1m2oqhAlMMQf/nydXNzw/f92o3Kzs4LRrNocU1penoe2BYCgiBmJKM053xInuE4CgJvb+/z4dEhlJXxZBLheDiaMQYyko8nobT9bOvs3P/6bb9YKsmqEc7Dcrns+YNadbnTaa6tdk0TQUlKkkgU0kUUw1LRURTt8dYWQoUFTqvV8jxcPHxwv1BwG40WQiZfybSQ7+PZbFxdrknPtx8VXBuIymQ6tS27WCoauuG67spK52anzX9SLBZoTmzLhJLAMUOag9F41i22JFkQgWjbzr271SSJOZA8J6WSOxwGiiJOJ8F8/t91kKZYlhhJF1CiPDCMcmy5quocPzKWKOMq0ulpn1EKJGE0GoAkWfCo/fx1xIFwT4AEw3Cecd6SimP84d377z++C0LuuuWC4yJdFD++fsktbLY2oKobhkvy/KTXG44CPqnd7mi6apmW5/3tX5zUKmaaXnPWOiEAJ5GtmVG04DFcXq40Ww1KBWQgWVbm4czQ9VarkeLpcc/7B5oBe2TiyDgRAAAAAElFTkSuQmCC',
+                grove_heart_top    : 'iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAIAAACQkWg2AAAALHRFWHRDcmVhdGlvbiBUaW1lAFR1ZSAxOSBNYXIgMjAxMyAxMzo1NjozNiArMDIwMOmuKHIAAAAHdElNRQfdCAsNHyULgyAbAAAACXBIWXMAAB7BAAAewQHDaVRTAAAABGdBTUEAALGPC/xhBQAAAt9JREFUeNoVkslvE1cAxt+82TIez2LHjseOs+HQLCRshURtr20PFRwRUVUh9cL/0b+DC4f2UHHgwoELiroIEELQQJYmJo5jJzGONzxvtrfMG8z5O3y/76dP+OPhb5SyyvyyJJnjeYcSLEmKLMv9QY9zZhpGGKAkiQUhqde2v6TdrudM2L8/+DNfcLRUSpLVbrfb6bQdp6RpY7IsMcoIDk8ajY17t8LAF2//9O3Tx5sXp/L5nL66POO551OTxZlJmwTuZLlI0PnNtXVF5EGv+e/zbTWtQ86oYVvl2dLC8sKrFy9kgZZyQs4ES4tFiQ+WFkvvXj8rlCsr19dN8wuBNDtT/u/1vm1qz//avLq+tnL5ylH1YExSJ7JOShsjGHXarf2tf6amK4aRrsxNQUGAJWfCsHOaPgZi0qzunR7XCGGNw/8pIQjhK1+vQRlT4htpwzKzMOY8GVlg3LDG55cuoyCMQtdIqxEOawc7Rwd7aSsb4zhmUW/Q930XAiDEPI4opWEUDDsxUFbXvy+UFwCAueK0pCouQppmRwzEMe8PPOii8KzVA0nCk/joQ+PCV/MxJoZhT88teF4oiTIUIRRF2xgpFiOMpdy4nbEtRVbtXCY7btb2tlv1DwIgHuqf1k9KpUlNMzEJRZgNQ9+ZyI4ahqmUIkkClEUrawogceZmDw92dF1XVSXhdNA59pEbAzGTyY4GQx5D1/UCL/IG0dbb9yvXr+XyFyqXbjJKLy4tVlavfmy1KUvSZsb3IkwAJCRklJydHGspw/fYUbU6Qg5RJAvQdz9V37/berN745vvXv69SSjp9ToSxr6HgtphvVhmlpXa2TmxMl6AkABw2iqct5o/3N549uSRYZjkbKhrgvjz3R+v3bi0u9cWlDQXrQSqjeb5abvb7gURHr1UbZ62+y7e3a//ev+OqkJJVjTG4C/3NyyrwBPIYgYSoKgK50BP6bKsIG+Ihr0ockn46bD28TO/g4eIBtZPLAAAAABJRU5ErkJggg=='
+        ].each { name, encoded -> writePngAsset(name as String, encoded as String) }
     }
 }
 
