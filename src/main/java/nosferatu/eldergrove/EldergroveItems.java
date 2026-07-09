@@ -8,6 +8,11 @@ import net.neoforged.neoforge.registries.DeferredRegister;
 public final class EldergroveItems {
     public static final DeferredRegister.Items ITEMS = DeferredRegister.createItems(Eldergrove.MODID);
 
+    public static final DeferredItem<BlockItem> ELDERGROVE_GRASS = ITEMS.registerSimpleBlockItem(
+            "eldergrove_grass",
+            EldergroveBlocks.ELDERGROVE_GRASS
+    );
+
     public static final DeferredItem<BlockItem> ELDERGROVE_MOSS = ITEMS.registerSimpleBlockItem(
             "eldergrove_moss",
             EldergroveBlocks.ELDERGROVE_MOSS
