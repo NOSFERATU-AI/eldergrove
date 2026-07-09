@@ -4,8 +4,8 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.util.RandomSource;
-import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.LeavesBlock;
 import net.minecraft.world.level.block.state.BlockState;
 
 public final class EldergroveTreeGenerator {
@@ -13,68 +13,111 @@ public final class EldergroveTreeGenerator {
     }
 
     public static boolean grow(ServerLevel level, BlockPos origin, RandomSource random) {
-        int height = 8 + random.nextInt(5);
+        int height = 9 + random.nextInt(4);
 
         if (!canGrow(level, origin, height)) {
             return false;
         }
 
-        BlockState soil = level.getBlockState(origin.below());
-        if (soil.is(Blocks.GRASS_BLOCK) || soil.is(Blocks.DIRT) || soil.is(EldergroveBlocks.ELDERGROVE_GRASS_FAINT.get())
-                || soil.is(EldergroveBlocks.ELDERGROVE_GRASS.get()) || soil.is(EldergroveBlocks.ELDERGROVE_GRASS_DEEP.get())) {
-            level.setBlock(origin.below(), EldergroveBlocks.ELDERGROVE_GRASS_DEEP.get().defaultBlockState(), 2);
+        strengthenSoil(level, origin);
+        placeCrown(level, origin, height, random);
+        placeTrunk(level, origin, height, random);
+
+        return true;
+    }
+
+    private static void placeTrunk(ServerLevel level, BlockPos origin, int height, RandomSource random) {
+        BlockState log = EldergroveBlocks.ELDERWOOD_LOG.get().defaultBlockState();
+        BlockState heart = EldergroveBlocks.GROVE_HEART.get().defaultBlockState();
+        boolean placedHeart = false;
+
+        for (int y = 0; y < height; y++) {
+            boolean canPlaceHeart = y > 2 && y < height - 3 && !placedHeart && random.nextInt(12) == 0;
+            setTrunkBlock(level, origin.offset(0, y, 0), canPlaceHeart ? heart : log);
+            setTrunkBlock(level, origin.offset(1, y, 0), log);
+            setTrunkBlock(level, origin.offset(0, y, 1), log);
+            setTrunkBlock(level, origin.offset(1, y, 1), log);
+            if (canPlaceHeart) {
+                placedHeart = true;
+            }
         }
 
-        int leafBottom = origin.getY() + height - 5;
-        int leafTop = origin.getY() + height + 3 + random.nextInt(3);
-        for (int y = leafBottom; y <= leafTop; y++) {
-            int centerY = clamp(y, origin.getY() + height - 3, origin.getY() + height);
-            for (int x = origin.getX() - 5; x <= origin.getX() + 5; x++) {
-                for (int z = origin.getZ() - 5; z <= origin.getZ() + 5; z++) {
-                    double dx = x - origin.getX();
-                    double dy = y - centerY;
-                    double dz = z - origin.getZ();
-                    double distance = dx * dx + dy * dy + dz * dz;
-                    if (distance < 10 + random.nextInt(8)) {
-                        BlockPos leafPos = new BlockPos(x, y, z);
+        int shoulderY = 2 + random.nextInt(2);
+        setTrunkBlock(level, origin.offset(-1, 0, 0), log);
+        setTrunkBlock(level, origin.offset(-1, 1, 0), log);
+        setTrunkBlock(level, origin.offset(2, 0, 1), log);
+        setTrunkBlock(level, origin.offset(2, 1, 1), log);
+        setTrunkBlock(level, origin.offset(0, 0, -1), log);
+        setTrunkBlock(level, origin.offset(0, 1, -1), log);
+        setTrunkBlock(level, origin.offset(1, 0, 2), log);
+        setTrunkBlock(level, origin.offset(1, 1, 2), log);
+
+        setTrunkBlock(level, origin.offset(-1, shoulderY, 0), log);
+        setTrunkBlock(level, origin.offset(2, shoulderY, 1), log);
+        setTrunkBlock(level, origin.offset(0, shoulderY, -1), log);
+        setTrunkBlock(level, origin.offset(1, shoulderY, 2), log);
+
+        int topY = height;
+        setTrunkBlock(level, origin.offset(0, topY, 0), log);
+        setTrunkBlock(level, origin.offset(1, topY, 0), log);
+        setTrunkBlock(level, origin.offset(0, topY, 1), log);
+        setTrunkBlock(level, origin.offset(1, topY, 1), log);
+    }
+
+    private static void placeCrown(ServerLevel level, BlockPos origin, int height, RandomSource random) {
+        BlockPos center = origin.offset(0, height - 1, 0);
+        int bottom = height - 5;
+        int top = height + 4;
+
+        for (int y = bottom; y <= top; y++) {
+            int relY = y - height;
+            double yShape = Math.abs(relY + 1) * 0.55D;
+            double radius = 4.8D - yShape;
+            if (relY > 1) {
+                radius -= relY * 0.35D;
+            }
+            if (relY < -3) {
+                radius -= 0.6D;
+            }
+
+            for (int x = -5; x <= 6; x++) {
+                for (int z = -5; z <= 6; z++) {
+                    double dx = x - 0.5D;
+                    double dz = z - 0.5D;
+                    double distance = Math.sqrt(dx * dx + dz * dz);
+                    double ragged = random.nextDouble() * 0.75D;
+                    if (distance <= radius + ragged) {
+                        BlockPos leafPos = center.offset(x, relY, z);
                         if (canReplaceWithLeaves(level, leafPos)) {
-                            level.setBlock(leafPos, EldergroveBlocks.ELDERWOOD_LEAVES.get().defaultBlockState(), 2);
+                            setLeaves(level, leafPos);
                         }
                     }
                 }
             }
         }
 
-        boolean placedHeart = false;
-        int heartChance = Math.max(10, (int) (height * 1.5D));
-        for (int dy = 0; dy < height; dy++) {
-            BlockPos trunkPos = origin.above(dy);
-            if (dy > 0 && !placedHeart && random.nextInt(heartChance) == 0) {
-                setLog(level, trunkPos, EldergroveBlocks.GROVE_HEART.get().defaultBlockState());
-                placedHeart = true;
-            } else {
-                setLog(level, trunkPos, EldergroveBlocks.ELDERWOOD_LOG.get().defaultBlockState());
+        for (int i = 0; i < 16; i++) {
+            int x = random.nextInt(11) - 5;
+            int z = random.nextInt(11) - 5;
+            int y = height - 4 + random.nextInt(8);
+            BlockPos leafPos = origin.offset(x, y, z);
+            if (canReplaceWithLeaves(level, leafPos)) {
+                setLeaves(level, leafPos);
             }
-
-            setLog(level, trunkPos.west(), EldergroveBlocks.ELDERWOOD_LOG.get().defaultBlockState());
-            setLog(level, trunkPos.east(), EldergroveBlocks.ELDERWOOD_LOG.get().defaultBlockState());
-            setLog(level, trunkPos.north(), EldergroveBlocks.ELDERWOOD_LOG.get().defaultBlockState());
-            setLog(level, trunkPos.south(), EldergroveBlocks.ELDERWOOD_LOG.get().defaultBlockState());
         }
+    }
 
-        BlockPos top = origin.above(height);
-        setLog(level, top, EldergroveBlocks.ELDERWOOD_LOG.get().defaultBlockState());
-        setLog(level, origin.offset(-1, 0, -1), EldergroveBlocks.ELDERWOOD_LOG.get().defaultBlockState());
-        setLog(level, origin.offset(1, 0, 1), EldergroveBlocks.ELDERWOOD_LOG.get().defaultBlockState());
-        setLog(level, origin.offset(-1, 0, 1), EldergroveBlocks.ELDERWOOD_LOG.get().defaultBlockState());
-        setLog(level, origin.offset(1, 0, -1), EldergroveBlocks.ELDERWOOD_LOG.get().defaultBlockState());
-
-        if (random.nextInt(3) != 0) setLog(level, origin.offset(-1, 1, -1), EldergroveBlocks.ELDERWOOD_LOG.get().defaultBlockState());
-        if (random.nextInt(3) != 0) setLog(level, origin.offset(1, 1, 1), EldergroveBlocks.ELDERWOOD_LOG.get().defaultBlockState());
-        if (random.nextInt(3) != 0) setLog(level, origin.offset(-1, 1, 1), EldergroveBlocks.ELDERWOOD_LOG.get().defaultBlockState());
-        if (random.nextInt(3) != 0) setLog(level, origin.offset(1, 1, -1), EldergroveBlocks.ELDERWOOD_LOG.get().defaultBlockState());
-
-        return true;
+    private static void strengthenSoil(ServerLevel level, BlockPos origin) {
+        for (int x = -1; x <= 2; x++) {
+            for (int z = -1; z <= 2; z++) {
+                BlockPos soilPos = origin.offset(x, -1, z);
+                BlockState soil = level.getBlockState(soilPos);
+                if (soil.is(Blocks.GRASS_BLOCK) || soil.is(Blocks.DIRT) || soil.is(EldergroveBlocks.ELDERGROVE_GRASS_FAINT.get())
+                        || soil.is(EldergroveBlocks.ELDERGROVE_GRASS.get()) || soil.is(EldergroveBlocks.ELDERGROVE_GRASS_DEEP.get())) {
+                    level.setBlock(soilPos, EldergroveBlocks.ELDERGROVE_GRASS_DEEP.get().defaultBlockState(), 2);
+                }
+            }
+        }
     }
 
     private static boolean canGrow(ServerLevel level, BlockPos origin, int height) {
@@ -83,9 +126,9 @@ public final class EldergroveTreeGenerator {
         }
 
         for (int y = 0; y <= height + 4; y++) {
-            int radius = y == 0 ? 1 : y >= height - 2 ? 5 : 2;
-            for (int x = -radius; x <= radius; x++) {
-                for (int z = -radius; z <= radius; z++) {
+            int radius = y < 2 ? 2 : y >= height - 5 ? 6 : 3;
+            for (int x = -radius; x <= radius + 1; x++) {
+                for (int z = -radius; z <= radius + 1; z++) {
                     BlockPos pos = origin.offset(x, y, z);
                     if (!canReplaceTreeSpace(level, pos)) {
                         return false;
@@ -112,14 +155,14 @@ public final class EldergroveTreeGenerator {
         return state.isAir() || state.canBeReplaced() || state.is(BlockTags.LEAVES);
     }
 
-    private static void setLog(ServerLevel level, BlockPos pos, BlockState state) {
+    private static void setTrunkBlock(ServerLevel level, BlockPos pos, BlockState state) {
         BlockState current = level.getBlockState(pos);
         if (current.isAir() || current.canBeReplaced() || current.is(BlockTags.LEAVES) || current.is(EldergroveBlocks.ELDERWOOD_SAPLING.get())) {
             level.setBlock(pos, state, 2);
         }
     }
 
-    private static int clamp(int value, int min, int max) {
-        return Math.max(min, Math.min(max, value));
+    private static void setLeaves(ServerLevel level, BlockPos pos) {
+        level.setBlock(pos, EldergroveBlocks.ELDERWOOD_LEAVES.get().defaultBlockState().setValue(LeavesBlock.PERSISTENT, true), 2);
     }
 }
