@@ -21,24 +21,15 @@ public final class EldergroveBlocks {
                     .sound(SoundType.MOSS)
     );
 
-    public static final DeferredBlock<Block> ELDERGROVE_PLANKS = BLOCKS.registerSimpleBlock(
-            "eldergrove_planks",
+    public static final DeferredBlock<Block> ELDERWOOD_PLANKS = BLOCKS.registerSimpleBlock(
+            "elderwood_planks",
             BlockBehaviour.Properties.ofFullCopy(Blocks.OAK_PLANKS)
                     .mapColor(MapColor.WOOD)
                     .sound(SoundType.WOOD)
     );
 
-    public static final DeferredBlock<LeavesBlock> ELDERGROVE_LEAVES = BLOCKS.register(
-            "eldergrove_leaves",
-            () -> new LeavesBlock(
-                    BlockBehaviour.Properties.ofFullCopy(Blocks.OAK_LEAVES)
-                            .mapColor(MapColor.COLOR_PURPLE)
-                            .sound(SoundType.AZALEA_LEAVES)
-            )
-    );
-
-    public static final DeferredBlock<RotatedPillarBlock> SILVERWOOD_LOG = BLOCKS.register(
-            "silverwood_log",
+    public static final DeferredBlock<RotatedPillarBlock> ELDERWOOD_LOG = BLOCKS.register(
+            "elderwood_log",
             () -> new RotatedPillarBlock(
                     BlockBehaviour.Properties.ofFullCopy(Blocks.BIRCH_LOG)
                             .mapColor(MapColor.WOOD)
@@ -46,8 +37,8 @@ public final class EldergroveBlocks {
             )
     );
 
-    public static final DeferredBlock<LeavesBlock> SILVERWOOD_LEAVES = BLOCKS.register(
-            "silverwood_leaves",
+    public static final DeferredBlock<LeavesBlock> ELDERWOOD_LEAVES = BLOCKS.register(
+            "elderwood_leaves",
             () -> new LeavesBlock(
                     BlockBehaviour.Properties.ofFullCopy(Blocks.OAK_LEAVES)
                             .mapColor(MapColor.COLOR_PURPLE)
@@ -55,13 +46,13 @@ public final class EldergroveBlocks {
             )
     );
 
-    public static final DeferredBlock<Block> SILVERWOOD_CORE = BLOCKS.register(
-            "silverwood_core",
+    public static final DeferredBlock<Block> GROVE_HEART = BLOCKS.register(
+            "grove_heart",
             () -> new EldergroveSpreadingCoreBlock(
                     BlockBehaviour.Properties.ofFullCopy(Blocks.ROOTED_DIRT)
                             .mapColor(MapColor.COLOR_PURPLE)
-                            .sound(SoundType.WOOD)
-                            .lightLevel(state -> 9)
+                            .sound(SoundType.AMETHYST)
+                            .lightLevel(state -> 11)
                             .randomTicks()
             )
     );
