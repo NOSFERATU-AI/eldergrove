@@ -14,6 +14,15 @@ import net.neoforged.neoforge.registries.DeferredRegister;
 public final class EldergroveBlocks {
     public static final DeferredRegister.Blocks BLOCKS = DeferredRegister.createBlocks(Eldergrove.MODID);
 
+    public static final DeferredBlock<Block> ELDERGROVE_GRASS = BLOCKS.register(
+            "eldergrove_grass",
+            () -> new EldergroveGrassBlock(
+                    BlockBehaviour.Properties.ofFullCopy(Blocks.GRASS_BLOCK)
+                            .mapColor(MapColor.COLOR_PURPLE)
+                            .sound(SoundType.GRASS)
+            )
+    );
+
     public static final DeferredBlock<Block> ELDERGROVE_MOSS = BLOCKS.registerSimpleBlock(
             "eldergrove_moss",
             BlockBehaviour.Properties.ofFullCopy(Blocks.MOSS_BLOCK)
