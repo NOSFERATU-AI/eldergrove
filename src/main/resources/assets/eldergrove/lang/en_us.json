@@ -1,6 +1,8 @@
 {
   "itemGroup.eldergrove": "Eldergrove",
+  "block.eldergrove.eldergrove_grass_faint": "Faint Eldergrove Grass",
   "block.eldergrove.eldergrove_grass": "Eldergrove Grass",
+  "block.eldergrove.eldergrove_grass_deep": "Deep Eldergrove Grass",
   "block.eldergrove.eldergrove_moss": "Eldergrove Moss",
   "block.eldergrove.elderwood_log": "Elderwood Log",
   "block.eldergrove.elderwood_planks": "Elderwood Planks",
