@@ -1,0 +1,16 @@
+{
+  "variants": {
+    "axis=x": {
+      "model": "eldergrove:block/silverwood_log",
+      "x": 90,
+      "y": 90
+    },
+    "axis=y": {
+      "model": "eldergrove:block/silverwood_log"
+    },
+    "axis=z": {
+      "model": "eldergrove:block/silverwood_log",
+      "x": 90
+    }
+  }
+}
