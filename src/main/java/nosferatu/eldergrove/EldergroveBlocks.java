@@ -14,11 +14,29 @@ import net.neoforged.neoforge.registries.DeferredRegister;
 public final class EldergroveBlocks {
     public static final DeferredRegister.Blocks BLOCKS = DeferredRegister.createBlocks(Eldergrove.MODID);
 
+    public static final DeferredBlock<Block> ELDERGROVE_GRASS_FAINT = BLOCKS.register(
+            "eldergrove_grass_faint",
+            () -> new EldergroveGrassBlock(
+                    BlockBehaviour.Properties.ofFullCopy(Blocks.GRASS_BLOCK)
+                            .mapColor(MapColor.COLOR_CYAN)
+                            .sound(SoundType.GRASS)
+            )
+    );
+
     public static final DeferredBlock<Block> ELDERGROVE_GRASS = BLOCKS.register(
             "eldergrove_grass",
             () -> new EldergroveGrassBlock(
                     BlockBehaviour.Properties.ofFullCopy(Blocks.GRASS_BLOCK)
-                            .mapColor(MapColor.COLOR_PURPLE)
+                            .mapColor(MapColor.COLOR_CYAN)
+                            .sound(SoundType.GRASS)
+            )
+    );
+
+    public static final DeferredBlock<Block> ELDERGROVE_GRASS_DEEP = BLOCKS.register(
+            "eldergrove_grass_deep",
+            () -> new EldergroveGrassBlock(
+                    BlockBehaviour.Properties.ofFullCopy(Blocks.GRASS_BLOCK)
+                            .mapColor(MapColor.COLOR_CYAN)
                             .sound(SoundType.GRASS)
             )
     );
@@ -26,7 +44,7 @@ public final class EldergroveBlocks {
     public static final DeferredBlock<Block> ELDERGROVE_MOSS = BLOCKS.registerSimpleBlock(
             "eldergrove_moss",
             BlockBehaviour.Properties.ofFullCopy(Blocks.MOSS_BLOCK)
-                    .mapColor(MapColor.COLOR_PURPLE)
+                    .mapColor(MapColor.COLOR_CYAN)
                     .sound(SoundType.MOSS)
     );
 
@@ -50,7 +68,7 @@ public final class EldergroveBlocks {
             "elderwood_leaves",
             () -> new LeavesBlock(
                     BlockBehaviour.Properties.ofFullCopy(Blocks.OAK_LEAVES)
-                            .mapColor(MapColor.COLOR_PURPLE)
+                            .mapColor(MapColor.COLOR_CYAN)
                             .sound(SoundType.AZALEA_LEAVES)
             )
     );
@@ -59,7 +77,7 @@ public final class EldergroveBlocks {
             "grove_heart",
             () -> new EldergroveSpreadingCoreBlock(
                     BlockBehaviour.Properties.ofFullCopy(Blocks.ROOTED_DIRT)
-                            .mapColor(MapColor.COLOR_PURPLE)
+                            .mapColor(MapColor.COLOR_CYAN)
                             .sound(SoundType.AMETHYST)
                             .lightLevel(state -> 11)
                             .randomTicks()
