@@ -23,6 +23,21 @@ public final class EldergroveItems {
             EldergroveBlocks.ELDERGROVE_LEAVES
     );
 
+    public static final DeferredItem<BlockItem> SILVERWOOD_LOG = ITEMS.registerSimpleBlockItem(
+            "silverwood_log",
+            EldergroveBlocks.SILVERWOOD_LOG
+    );
+
+    public static final DeferredItem<BlockItem> SILVERWOOD_LEAVES = ITEMS.registerSimpleBlockItem(
+            "silverwood_leaves",
+            EldergroveBlocks.SILVERWOOD_LEAVES
+    );
+
+    public static final DeferredItem<BlockItem> SILVERWOOD_CORE = ITEMS.registerSimpleBlockItem(
+            "silverwood_core",
+            EldergroveBlocks.SILVERWOOD_CORE
+    );
+
     private EldergroveItems() {
     }
 
