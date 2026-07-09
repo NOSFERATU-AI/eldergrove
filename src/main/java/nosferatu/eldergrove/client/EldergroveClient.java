@@ -107,7 +107,7 @@ public final class EldergroveClient {
                     }
 
                     mutable.set(pos.getX() + x, pos.getY() + y, pos.getZ() + z);
-                    if (level.getBlockState(mutable).is(EldergroveBlocks.GROVE_HEART.get())) {
+                    if (isGroveHeartSafe(level, mutable)) {
                         double distance = Math.sqrt(distanceSq);
                         strongest = Math.max(strongest, 1.0D - distance / radius);
                     }
@@ -116,6 +116,16 @@ public final class EldergroveClient {
         }
 
         return strongest;
+    }
+
+    private static boolean isGroveHeartSafe(BlockAndTintGetter level, BlockPos pos) {
+        try {
+            return level.getBlockState(pos).is(EldergroveBlocks.GROVE_HEART.get());
+        } catch (IndexOutOfBoundsException ignored) {
+            return false;
+        } catch (RuntimeException ignored) {
+            return false;
+        }
     }
 
     private static int magicalGrassTarget(BlockPos pos) {
