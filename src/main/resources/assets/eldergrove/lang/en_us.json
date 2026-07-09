@@ -1,4 +1,6 @@
 {
   "itemGroup.eldergrove": "Eldergrove",
-  "item.eldergrove.heart_of_the_grove": "Heart of the Grove"
+  "block.eldergrove.eldergrove_moss": "Eldergrove Moss",
+  "block.eldergrove.eldergrove_planks": "Eldergrove Planks",
+  "block.eldergrove.eldergrove_leaves": "Eldergrove Leaves"
 }
