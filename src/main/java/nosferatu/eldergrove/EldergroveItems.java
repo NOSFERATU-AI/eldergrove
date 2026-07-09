@@ -43,6 +43,11 @@ public final class EldergroveItems {
             EldergroveBlocks.ELDERWOOD_LEAVES
     );
 
+    public static final DeferredItem<BlockItem> ELDERWOOD_SAPLING = ITEMS.registerSimpleBlockItem(
+            "elderwood_sapling",
+            EldergroveBlocks.ELDERWOOD_SAPLING
+    );
+
     public static final DeferredItem<BlockItem> GROVE_HEART = ITEMS.registerSimpleBlockItem(
             "grove_heart",
             EldergroveBlocks.GROVE_HEART
