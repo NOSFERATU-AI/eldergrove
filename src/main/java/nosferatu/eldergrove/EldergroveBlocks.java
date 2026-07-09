@@ -77,7 +77,7 @@ public final class EldergroveBlocks {
 
     public static final DeferredBlock<SaplingBlock> ELDERWOOD_SAPLING = BLOCKS.register(
             "elderwood_sapling",
-            () -> new EldergroveSaplingBlock(
+            () -> new ElderwoodSaplingBlock(
                     TreeGrower.OAK,
                     BlockBehaviour.Properties.ofFullCopy(Blocks.OAK_SAPLING)
                             .mapColor(MapColor.COLOR_CYAN)
