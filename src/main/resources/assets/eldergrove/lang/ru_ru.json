@@ -2,5 +2,8 @@
   "itemGroup.eldergrove": "Eldergrove",
   "block.eldergrove.eldergrove_moss": "Мох древней рощи",
   "block.eldergrove.eldergrove_planks": "Доски древней рощи",
-  "block.eldergrove.eldergrove_leaves": "Листва древней рощи"
+  "block.eldergrove.eldergrove_leaves": "Листва древней рощи",
+  "block.eldergrove.silverwood_log": "Серебродревесное бревно",
+  "block.eldergrove.silverwood_leaves": "Серебродревесная листва",
+  "block.eldergrove.silverwood_core": "Серебродревесное ядро"
 }
