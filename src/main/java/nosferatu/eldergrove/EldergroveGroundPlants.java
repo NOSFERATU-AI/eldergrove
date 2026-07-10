@@ -12,6 +12,14 @@ public final class EldergroveGroundPlants {
     }
 
     public static void placeNearTree(LevelAccessor level, BlockPos origin, RandomSource random, int tries, int radius) {
+        placeNearTree(level, origin, random, tries, radius, true);
+    }
+
+    public static void placeVishroomsNearTree(LevelAccessor level, BlockPos origin, RandomSource random, int tries, int radius) {
+        placeNearTree(level, origin, random, tries, radius, false);
+    }
+
+    private static void placeNearTree(LevelAccessor level, BlockPos origin, RandomSource random, int tries, int radius, boolean allowShimmerleaf) {
         for (int i = 0; i < tries; i++) {
             int x = random.nextInt(radius * 2 + 1) - radius;
             int z = random.nextInt(radius * 2 + 1) - radius;
@@ -24,9 +32,9 @@ public final class EldergroveGroundPlants {
                 continue;
             }
 
-            BlockState plant = random.nextInt(5) == 0
-                    ? EldergroveBlocks.VISHROOM.get().defaultBlockState()
-                    : EldergroveBlocks.SHIMMERLEAF.get().defaultBlockState();
+            BlockState plant = allowShimmerleaf && random.nextInt(5) != 0
+                    ? EldergroveBlocks.SHIMMERLEAF.get().defaultBlockState()
+                    : EldergroveBlocks.VISHROOM.get().defaultBlockState();
 
             if (plant.canSurvive(level, surface)) {
                 level.setBlock(surface, plant, 2);
