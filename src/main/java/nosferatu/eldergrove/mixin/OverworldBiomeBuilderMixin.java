@@ -40,7 +40,7 @@ public abstract class OverworldBiomeBuilderMixin {
                         Climate.Parameter.span(minHumidity, maxHumidity),
                         Climate.Parameter.span(0.03F, 1.00F),
                         Climate.Parameter.span(minErosion, maxErosion),
-                        Climate.Parameter.point(0.0F),
+                        Climate.Parameter.span(-1.00F, 1.00F),
                         Climate.Parameter.span(minWeirdness, maxWeirdness),
                         0.0F
                 ),
