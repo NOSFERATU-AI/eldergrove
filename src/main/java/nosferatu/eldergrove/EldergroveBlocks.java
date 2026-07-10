@@ -52,6 +52,45 @@ public final class EldergroveBlocks {
                     .sound(SoundType.MOSS)
     );
 
+    public static final DeferredBlock<Block> TAINTED_SOIL = BLOCKS.registerSimpleBlock(
+            "tainted_soil",
+            BlockBehaviour.Properties.ofFullCopy(Blocks.SOUL_SOIL)
+                    .mapColor(MapColor.COLOR_PURPLE)
+                    .sound(SoundType.SOUL_SOIL)
+    );
+
+    public static final DeferredBlock<Block> TAINTED_CRUST = BLOCKS.registerSimpleBlock(
+            "tainted_crust",
+            BlockBehaviour.Properties.ofFullCopy(Blocks.SCULK)
+                    .mapColor(MapColor.COLOR_PURPLE)
+                    .sound(SoundType.SCULK)
+                    .lightLevel(state -> 1)
+    );
+
+    public static final DeferredBlock<Block> TAINTED_GROWTH = BLOCKS.register(
+            "tainted_growth",
+            () -> new EldergrovePlantBlock(
+                    BlockBehaviour.Properties.ofFullCopy(Blocks.CRIMSON_ROOTS)
+                            .mapColor(MapColor.COLOR_PURPLE)
+                            .noCollission()
+                            .instabreak()
+                            .lightLevel(state -> 3)
+                            .sound(SoundType.ROOTS)
+            )
+    );
+
+    public static final DeferredBlock<Block> TAINTED_FIBRE = BLOCKS.register(
+            "tainted_fibre",
+            () -> new EldergrovePlantBlock(
+                    BlockBehaviour.Properties.ofFullCopy(Blocks.CRIMSON_ROOTS)
+                            .mapColor(MapColor.COLOR_PURPLE)
+                            .noCollission()
+                            .instabreak()
+                            .lightLevel(state -> 2)
+                            .sound(SoundType.ROOTS)
+            )
+    );
+
     public static final DeferredBlock<Block> ELDERWOOD_PLANKS = BLOCKS.registerSimpleBlock(
             "elderwood_planks",
             BlockBehaviour.Properties.ofFullCopy(Blocks.OAK_PLANKS)
