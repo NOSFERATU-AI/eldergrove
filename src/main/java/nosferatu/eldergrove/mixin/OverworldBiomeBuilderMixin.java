@@ -17,13 +17,10 @@ import java.util.function.Consumer;
 public abstract class OverworldBiomeBuilderMixin {
     @Inject(method = "addBiomes", at = @At("TAIL"))
     private void eldergrove$addEldergroveBiomes(Consumer<Pair<Climate.ParameterPoint, ResourceKey<Biome>>> mapper, CallbackInfo ci) {
-        // Thaumcraft-style Magical Forest should be an inland forest pocket, not a desert/badlands repaint.
-        // Keep it out of the hot temperature band, out of low-continentalness lake/coast bands,
-        // and away from highly eroded flat basins that often become big water bowls.
-        addEldergrove(mapper, 0.05F, 0.35F, 0.48F, 0.82F, 0.62F, 1.00F, -0.28F, 0.08F, -0.42F, -0.08F);
-        addEldergrove(mapper, 0.05F, 0.35F, 0.48F, 0.82F, 0.62F, 1.00F, -0.28F, 0.08F, 0.08F, 0.34F);
-        addEldergrove(mapper, 0.22F, 0.52F, 0.55F, 0.88F, 0.68F, 1.00F, -0.24F, 0.06F, -0.38F, -0.10F);
-        addEldergrove(mapper, 0.22F, 0.52F, 0.55F, 0.88F, 0.68F, 1.00F, -0.24F, 0.06F, 0.10F, 0.30F);
+        // Thaumcraft-style Magical Forest should be a proper inland forest region.
+        // One broad, cool/moist inland band produces larger contiguous groves instead of tiny broken dots.
+        // Low/shore continentalness, hot badlands/desert temperatures, and high erosion lake basins are intentionally avoided.
+        addEldergrove(mapper, 0.08F, 0.58F, 0.52F, 0.95F, 0.72F, 1.00F, -0.46F, 0.02F, -0.62F, 0.62F);
     }
 
     private static void addEldergrove(
