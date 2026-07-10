@@ -17,13 +17,14 @@ import java.util.function.Consumer;
 public abstract class OverworldBiomeBuilderMixin {
     @Inject(method = "addBiomes", at = @At("TAIL"))
     private void eldergrove$addEldergroveBiomes(Consumer<Pair<Climate.ParameterPoint, ResourceKey<Biome>>> mapper, CallbackInfo ci) {
-        // Large magical forest regions are hard to control perfectly with vanilla climate injection.
-        // This uses one broad, moist, inland forest band to let Eldergrove form bigger contiguous groves,
-        // while still avoiding hot/dry badlands and desert climates.
+        // Moist inland forest band: keeps the main Eldergrove identity close to old magical forests.
         addEldergrove(mapper, 0.05F, 0.72F, 0.50F, 1.00F, 0.34F, 1.00F, -0.86F, 0.12F, -1.00F, 1.00F);
 
-        // Smaller secondary forest pockets keep the biome findable without forcing it into dry or coastal regions.
+        // Secondary forest pockets: improves findability without pushing too hard into dry/coastal climates.
         addEldergrove(mapper, 0.16F, 0.78F, 0.44F, 1.00F, 0.30F, 0.88F, -0.58F, 0.30F, -0.82F, 0.82F);
+
+        // Plains/meadow-friendly band: lets Eldergrove appear as a magical grove in open land, not only forests.
+        addEldergrove(mapper, 0.18F, 0.88F, 0.28F, 0.76F, 0.34F, 1.00F, -0.70F, 0.48F, -1.00F, 1.00F);
     }
 
     private static void addEldergrove(
