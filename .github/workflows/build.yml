@@ -30,11 +30,14 @@ jobs:
         run: |
           python3 - <<'PY'
           import base64
+          import struct
           import zipfile
           from pathlib import Path
 
+          # These are the original TC4 runtime PNGs. Patch the final jar directly so Gradle-generated
+          # fallback textures cannot overwrite them.
           textures = {
-              'assets/eldergrove/textures/block/greatwood_leaves.png': 'iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAIAAACQkWg2AAAALHRFWHRDcmVhdGlvbiBUaW1lAFR1ZSAxOSBNYXIgMjAxMyAxMzo1NzoyOSArMDIwMDyOMzsAAAAHdElNRQfdAxMLOSfAo/DAAAAACXBIWXMAAB7BAAAewQHDaVRTAAAABGdBTUEAALGPC/xhBQAAAexJREFUeNo9kkfPaVEYhTnn4NN7GyBKDIiaGDDxB/0mCYkgBlokBkIYGIgWvbvP/Xbu3YOdtd++1rvVlUplOBwGAoF+v69SqaxWazab/X6/g8Fgv98XCoVOp6P6d4rFouz3+0OhkM1m+Xx+u90ej8fRaHS73Yiw2WwkGwyGy+XC8/P5SESYzeb3+22xWDAdDofz+SzqpVIpEtbrNf1dLhcWr9crlUqlXq9Xq9UikYiICwaDArjdbkVRANzpdBrwfD4ljnDzMJlMAL1eXy6XAdVqtV6vA8QIAKfTKeO+3++QWywW4/EYaywWY1aeEJNl+fF4QG8+n+O6Xq9/y+dyOdIgB4Y3VSENjkajp9OJYSjME5I+n0+y2+1arZaE3W4ndCAHLMSFNATIxBUOhyGtEN1ut5FfiIjpv0pGoxGGVBQSowENFdjQ8fV6YWJTLHG5XIpopkf0brcrvODpdCqRt9lsNBoNJlgSjQA0bDQak8kEAkSznEQiAQcqSugAabaDjxqkIVo8HgfQAaGJFozFYAp02TwIisjPADqdDiMWFiw6c1qtlgASPrVaDcIHxZ/fQxOxL1GbO5PJiARF/EqsSMR7tVrRmjnBzWYTIyPBCnp852QyKYlPQkT194j/5/F4RD1q8e3oLAgwzh9F9QulytR7OwAAAABJRU5ErkJggg==',
+              'assets/eldergrove/textures/block/greatwood_leaves.png': 'iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAALHRFWHRDcmVhdGlvbiBUaW1lAFR1ZSAxOSBNYXIgMjAxMyAxMzo1NzoxNiArMDIwMERJRDEAAAAHdElNRQfdAxMLORkBwu1rAAAACXBIWXMAAB7BAAAewQHDaVRTAAAABGdBTUEAALGPC/xhBQAAAj5JREFUeNpdU9tKclEQnrW1PGUoInqjUUKX0euIZ32CsFQsDUKUyB4gQUJDfJXuPOGNROALeFVgpU37m1r7h39gs2fWmuM331LtdptnsxlFIhFqNBqKTEkmk3x6ekrMTNPplJ6entTNzQ3X63W519JsNtmO4IODA/L7/XJ4fX3NLy8vtFgsqNPpWAHv7++Uy+UY+uPjo5wvl0syer2e8nq9tN1uKZFIiMNgMFAI0FKtVtnn80kgOtWJQqEQGa1Wi8fjMZ2fn6ujoyMrKBqNWnowGCS73S46/icnJ6J/fX2RYYrliIO9vT3RXS4XAR/oZ2dn6uLiQtrW3UICgcA/QABSJpNhbd/d3fHt7a3YOI/H40z/SaFQYClvosuoCNQ1kKg4n8/FjsViNBwO1eXlJWezWXECXuFwmIx0Os27u7vScr/flza/v78lCexarcZInEqlGPMjGeTw8PAXRARfXV2p5+dnuYAjLtxut9Wqx+MBWLLqnZ0dC9i3tzeyAxC0tdls5AKkMYP54eFB6eDPz0/Cuk3T8lutVvT6+kpUKpVkJr1bDSRABSOh5/N5xvyaJ+Vyme/v70U3bDabgAiSwOmvEn18fNDx8bFUQwdYLwgGe39/n9br9S8vAJ6eF2Bh96PRiBwOhwALAfv07BCzkEVxA05K/dpwAlhOp1M+dKHJo1eHvwm6xQkDr61YLCpcgu9I1u121WQykQf19xbExgjABvuHVCoVtmteAwtQVmeGs/k+rErYDoBGh3p+dP8D3yIYxR1OrH0AAAAASUVORK5CYII=',
               'assets/eldergrove/textures/block/shimmerleaf.png': 'iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAALHRFWHRDcmVhdGlvbiBUaW1lAFR1ZSAxOSBNYXIgMjAxMyAxNDoxMTozMCArMDIwMKUIc+sAAAAHdElNRQfdAxMMCyZfm4KiAAAACXBIWXMAAB7BAAAewQHDaVRTAAAABGdBTUEAALGPC/xhBQAAAJZJREFUeNpjYBgFgxysPHbwPyE1TPg0n79/m2HJoT3/yTLgzounDDqyCgw3nz0hzwXyImIMVx4/YFCWkCI/DCTTJMkPAxD48+kPQUvwGvDz4U8GHmMeuCv4LPkIuggDcKlx/cenGcMFIIW8ZrxgxTyGPP///4Ho+/MWu3cYcdnMocTxn5GJkeH/r/8MjKyMDN/vfseqFgChEzJJbQkcMQAAAABJRU5ErkJggg==',
               'assets/eldergrove/textures/block/vishroom.png': 'iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAK3RFWHRDcmVhdGlvbiBUaW1lAE1vbiA3IEFwciAyMDE0IDE0OjQzOjM5ICswMjAwbXp0AgAAAAd0SU1FB94EBw0PNsxNU4MAAAAJcEhZcwAACxIAAAsSAdLdfvwAAAAEZ0FNQQAAsY8L/GEFAAABuElEQVR42u2SP2/TYBCHn9dx7NgOKWmIUyVUqKCqA4LCxEQkFnZGBiSEkGDgG3QpGwt8AyambgwIKvEFmJBQRaBqoSqIotR1SRPHduI/L2ZohIQDX4CbTqe75+5+d/DfRF6wffmenJs9R7VSB1XQC1w2Nl/T2VoX/wTcWF6RLXWBRXuOsxdsKGq4vs+H3a8cBA5PXz0QUwF3lh7JS6LCVcPCbhYoX2wSmwa+YdKzdN50unzc2eLxi7uTusKxc61xS7b1ea7I74zHLznhv+VkS1CuxlQWatiNBrIb0U8Enhuvfum/f/irTj0GlFJBJfJR1F1qmo9Zt0D2kGER8ckjPtykES5S/DGiqtqTqSeAckHhKBnhSoumNU80GDD43MWMCgy3O/hOnb1M0MQcc8Zs/AkIYo93OISZBqNeidN6ldmoyNBXCdwaO57BvjbkIDxkz93IF3HJaks9LXFeP8Vy1kVXEpQ0RdMq7MewnYQ48TfWnTWRC/jdVm9fl0ZRoikCwzK5/+R5bq46DVA2S7TsGWYsgyiOp37iVIDnh3hDHbIV4iSdClD+Nr7XP8ILxqjZhZ6t3JR5uT8BPUqiJzgcKmEAAAAASUVORK5CYII=',
           }
@@ -45,14 +48,24 @@ jobs:
           jar = jars[0]
           tmp = jar.with_suffix('.patched.jar')
 
-          replace = set(textures)
+          decoded_textures = {}
+          for name, encoded in textures.items():
+              data = base64.b64decode(encoded)
+              if data[:8] != b'\x89PNG\r\n\x1a\n':
+                  raise SystemExit(f'{name} is not a PNG')
+              width, height = struct.unpack('>II', data[16:24])
+              if (width, height) != (16, 16):
+                  raise SystemExit(f'{name} has wrong size: {width}x{height}')
+              decoded_textures[name] = data
+
+          replace = set(decoded_textures)
           with zipfile.ZipFile(jar, 'r') as zin, zipfile.ZipFile(tmp, 'w', zipfile.ZIP_DEFLATED) as zout:
               for info in zin.infolist():
                   if info.filename in replace:
                       continue
                   zout.writestr(info, zin.read(info.filename))
-              for name, encoded in textures.items():
-                  zout.writestr(name, base64.b64decode(encoded))
+              for name, data in decoded_textures.items():
+                  zout.writestr(name, data)
           tmp.replace(jar)
           PY
 
