@@ -2,12 +2,18 @@
   "type": "minecraft:block",
   "pools": [
     {
-      "bonus_rolls": 0,
+      "rolls": 1,
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "eldergrove:tainted_heart"
+        }
+      ],
       "conditions": [
         {
           "condition": "minecraft:match_tool",
           "predicate": {
-            "items": "#minecraft:pickaxes",
+            "items": "minecraft:netherite_pickaxe",
             "predicates": {
               "minecraft:enchantments": [
                 {
@@ -19,18 +25,8 @@
               ]
             }
           }
-        },
-        {
-          "condition": "minecraft:survives_explosion"
         }
-      ],
-      "entries": [
-        {
-          "type": "minecraft:item",
-          "name": "eldergrove:tainted_heart"
-        }
-      ],
-      "rolls": 1
+      ]
     }
   ]
 }
