@@ -107,7 +107,7 @@ public final class EldergroveBlocks {
             "shimmerleaf",
             () -> new EldergrovePlantBlock(
                     BlockBehaviour.Properties.ofFullCopy(Blocks.LILY_OF_THE_VALLEY)
-                            .mapColor(MapColor.COLOR_LIGHT_BLUE)
+                            .mapColor(MapColor.COLOR_CYAN)
                             .noCollission()
                             .instabreak()
                             .lightLevel(state -> 7)
@@ -119,7 +119,7 @@ public final class EldergroveBlocks {
             "vishroom",
             () -> new VishroomBlock(
                     BlockBehaviour.Properties.ofFullCopy(Blocks.RED_MUSHROOM)
-                            .mapColor(MapColor.COLOR_PURPLE)
+                            .mapColor(MapColor.PLANT)
                             .noCollission()
                             .instabreak()
                             .lightLevel(state -> 4)
