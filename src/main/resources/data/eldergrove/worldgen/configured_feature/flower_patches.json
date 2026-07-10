@@ -34,6 +34,18 @@
                   "Name": "minecraft:lily_of_the_valley"
                 },
                 "weight": 2
+              },
+              {
+                "data": {
+                  "Name": "minecraft:oxeye_daisy"
+                },
+                "weight": 2
+              },
+              {
+                "data": {
+                  "Name": "minecraft:dandelion"
+                },
+                "weight": 1
               }
             ]
           }
