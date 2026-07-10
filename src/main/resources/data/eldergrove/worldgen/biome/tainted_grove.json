@@ -24,7 +24,7 @@
     }
   },
   "spawners": {
-    "creature": [
+    "ambient": [
       {
         "type": "minecraft:bat",
         "weight": 4,
