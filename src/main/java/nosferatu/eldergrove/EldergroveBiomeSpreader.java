@@ -28,19 +28,29 @@ public final class EldergroveBiomeSpreader {
                 .getOrThrow(EldergroveBiomes.ELDERGROVE);
 
         int quartX = pos.getX() >> 2;
-        int quartY = pos.getY() >> 2;
         int quartZ = pos.getZ() >> 2;
+        int localQuartX = quartX & 3;
+        int localQuartZ = quartZ & 3;
+        boolean changed = false;
 
-        Holder<Biome> current = chunk.getNoiseBiome(quartX, quartY, quartZ);
-        if (current.is(EldergroveBiomes.ELDERGROVE)) {
+        for (int sectionIndex = 0; sectionIndex < chunk.getSections().length; sectionIndex++) {
+            PalettedContainer<Holder<Biome>> biomes = (PalettedContainer<Holder<Biome>>) chunk
+                    .getSection(sectionIndex)
+                    .getBiomes();
+
+            for (int localQuartY = 0; localQuartY < 4; localQuartY++) {
+                Holder<Biome> current = biomes.get(localQuartX, localQuartY, localQuartZ);
+                if (!current.is(EldergroveBiomes.ELDERGROVE)) {
+                    biomes.getAndSetUnchecked(localQuartX, localQuartY, localQuartZ, eldergrove);
+                    changed = true;
+                }
+            }
+        }
+
+        if (!changed) {
             return false;
         }
 
-        PalettedContainer<Holder<Biome>> biomes = (PalettedContainer<Holder<Biome>>) chunk
-                .getSection(chunk.getSectionIndex(pos.getY()))
-                .getBiomes();
-
-        biomes.getAndSetUnchecked(quartX & 3, quartY & 3, quartZ & 3, eldergrove);
         chunk.setUnsaved(true);
         sendBiomeUpdate(level, chunk, pos);
         refreshSurface(level, pos);
