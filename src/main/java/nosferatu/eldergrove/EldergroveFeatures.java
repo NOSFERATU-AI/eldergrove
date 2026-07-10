@@ -25,6 +25,11 @@ public final class EldergroveFeatures {
             () -> new GreatwoodTreeFeature(NoneFeatureConfiguration.CODEC)
     );
 
+    public static final DeferredHolder<Feature<?>, Feature<NoneFeatureConfiguration>> TAINTED_DEAD_TREE = FEATURES.register(
+            "tainted_dead_tree",
+            () -> new TaintedDeadTreeFeature(NoneFeatureConfiguration.CODEC)
+    );
+
     public static final DeferredHolder<Feature<?>, Feature<NoneFeatureConfiguration>> FALLEN_LOG = FEATURES.register(
             "fallen_log",
             () -> new FallenLogFeature(NoneFeatureConfiguration.CODEC)
