@@ -18,9 +18,8 @@ public final class EldergroveTreeGenerator {
             return false;
         }
 
-        refreshSoil(level, origin);
-        placeCrown(level, origin, height, random);
         placeTrunk(level, origin, height, random);
+        placeCrown(level, origin, height, random);
 
         return true;
     }
@@ -61,6 +60,27 @@ public final class EldergroveTreeGenerator {
         setTrunkBlock(level, origin.offset(1, topY, 0), log);
         setTrunkBlock(level, origin.offset(0, topY, 1), log);
         setTrunkBlock(level, origin.offset(1, topY, 1), log);
+
+        placeCanopyBranches(level, origin, height, random, log);
+    }
+
+    private static void placeCanopyBranches(ServerLevel level, BlockPos origin, int height, RandomSource random, BlockState log) {
+        int y = height - 2;
+        int[][] directions = new int[][]{
+                {1, 0}, {-1, 0}, {0, 1}, {0, -1},
+                {1, 1}, {-1, 1}, {1, -1}, {-1, -1}
+        };
+
+        for (int[] direction : directions) {
+            int length = 2 + random.nextInt(3);
+            int dx = direction[0];
+            int dz = direction[1];
+            for (int step = 1; step <= length; step++) {
+                int branchY = y + step / 3;
+                BlockPos branchPos = origin.offset(0, branchY, 0).offset(dx * step, 0, dz * step);
+                setTrunkBlock(level, branchPos, log);
+            }
+        }
     }
 
     private static void placeCrown(ServerLevel level, BlockPos origin, int height, RandomSource random) {
@@ -95,23 +115,13 @@ public final class EldergroveTreeGenerator {
             }
         }
 
-        for (int i = 0; i < 16; i++) {
+        for (int i = 0; i < 14; i++) {
             int x = random.nextInt(11) - 5;
             int z = random.nextInt(11) - 5;
             int y = height - 4 + random.nextInt(8);
             BlockPos leafPos = origin.offset(x, y, z);
             if (canReplaceWithLeaves(level, leafPos)) {
                 setLeaves(level, leafPos);
-            }
-        }
-    }
-
-    private static void refreshSoil(ServerLevel level, BlockPos origin) {
-        for (int x = -1; x <= 2; x++) {
-            for (int z = -1; z <= 2; z++) {
-                BlockPos soilPos = origin.offset(x, -1, z);
-                BlockState soil = level.getBlockState(soilPos);
-                level.sendBlockUpdated(soilPos, soil, soil, 2);
             }
         }
     }
@@ -137,7 +147,10 @@ public final class EldergroveTreeGenerator {
     }
 
     private static boolean canSustainTree(BlockState state) {
-        return state.is(BlockTags.DIRT);
+        return state.is(BlockTags.DIRT)
+                || state.is(EldergroveBlocks.ELDERGROVE_GRASS_FAINT.get())
+                || state.is(EldergroveBlocks.ELDERGROVE_GRASS.get())
+                || state.is(EldergroveBlocks.ELDERGROVE_GRASS_DEEP.get());
     }
 
     private static boolean canReplaceTreeSpace(ServerLevel level, BlockPos pos) {
@@ -153,11 +166,38 @@ public final class EldergroveTreeGenerator {
     private static void setTrunkBlock(ServerLevel level, BlockPos pos, BlockState state) {
         BlockState current = level.getBlockState(pos);
         if (current.isAir() || current.canBeReplaced() || current.is(BlockTags.LEAVES) || current.is(EldergroveBlocks.ELDERWOOD_SAPLING.get())) {
-            level.setBlock(pos, state, 2);
+            level.setBlock(pos, state, 3);
         }
     }
 
     private static void setLeaves(ServerLevel level, BlockPos pos) {
-        level.setBlock(pos, EldergroveBlocks.ELDERWOOD_LEAVES.get().defaultBlockState().setValue(LeavesBlock.PERSISTENT, true), 2);
+        int distance = distanceToNearestLog(level, pos);
+        level.setBlock(
+                pos,
+                EldergroveBlocks.ELDERWOOD_LEAVES.get().defaultBlockState()
+                        .setValue(LeavesBlock.PERSISTENT, false)
+                        .setValue(LeavesBlock.DISTANCE, distance),
+                3
+        );
+    }
+
+    private static int distanceToNearestLog(ServerLevel level, BlockPos pos) {
+        int best = 7;
+        BlockPos.MutableBlockPos mutable = new BlockPos.MutableBlockPos();
+        for (int y = -6; y <= 6; y++) {
+            for (int x = -6; x <= 6; x++) {
+                for (int z = -6; z <= 6; z++) {
+                    int distance = Math.abs(x) + Math.abs(y) + Math.abs(z);
+                    if (distance >= best || distance > 6) {
+                        continue;
+                    }
+                    mutable.set(pos.getX() + x, pos.getY() + y, pos.getZ() + z);
+                    if (level.getBlockState(mutable).is(BlockTags.LOGS)) {
+                        best = Math.max(1, distance);
+                    }
+                }
+            }
+        }
+        return best;
     }
 }
