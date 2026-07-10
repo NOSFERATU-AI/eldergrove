@@ -17,12 +17,13 @@ import java.util.function.Consumer;
 public abstract class OverworldBiomeBuilderMixin {
     @Inject(method = "addBiomes", at = @At("TAIL"))
     private void eldergrove$addEldergroveBiomes(Consumer<Pair<Climate.ParameterPoint, ResourceKey<Biome>>> mapper, CallbackInfo ci) {
-        // Eldergrove should feel like a Thaumcraft-style magical pocket inside forest climates:
-        // easier to find than before, but still kept away from deserts/badlands by requiring decent humidity.
-        // Continentalness starts at near-inland/mid-inland so it can appear near normal forests, not only far inland.
-        addEldergrove(mapper, 0.05F, 0.62F, 0.42F, 1.00F, 0.34F, 1.00F, -0.62F, 0.32F, -0.90F, 0.90F);
-        addEldergrove(mapper, 0.22F, 0.78F, 0.50F, 1.00F, 0.28F, 0.92F, -0.52F, 0.38F, -0.76F, 0.76F);
-        addEldergrove(mapper, 0.00F, 0.42F, 0.56F, 1.00F, 0.42F, 1.00F, -0.72F, 0.18F, -0.72F, 0.72F);
+        // Large magical forest regions are hard to control perfectly with vanilla climate injection.
+        // This uses one broad, moist, inland forest band to let Eldergrove form bigger contiguous groves,
+        // while still avoiding hot/dry badlands and desert climates.
+        addEldergrove(mapper, 0.05F, 0.72F, 0.50F, 1.00F, 0.34F, 1.00F, -0.86F, 0.12F, -1.00F, 1.00F);
+
+        // Smaller secondary forest pockets keep the biome findable without forcing it into dry or coastal regions.
+        addEldergrove(mapper, 0.16F, 0.78F, 0.44F, 1.00F, 0.30F, 0.88F, -0.58F, 0.30F, -0.82F, 0.82F);
     }
 
     private static void addEldergrove(
