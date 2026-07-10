@@ -38,16 +38,14 @@ public class EldergroveSpreadingCoreBlock extends Block {
 
     private static void spreadAura(ServerLevel level, BlockPos heartPos, RandomSource random) {
         for (int i = 0; i < SPREAD_ATTEMPTS; i++) {
-            BlockPos targetColumn = heartPos.offset(
-                    random.nextInt(AURA_RADIUS * 2 + 1) - AURA_RADIUS,
-                    0,
-                    random.nextInt(AURA_RADIUS * 2 + 1) - AURA_RADIUS
-            );
+            int offsetX = random.nextInt(AURA_RADIUS * 2 + 1) - AURA_RADIUS;
+            int offsetZ = random.nextInt(AURA_RADIUS * 2 + 1) - AURA_RADIUS;
 
-            if (targetColumn.distSqr(heartPos.getX(), targetColumn.getY(), heartPos.getZ()) > AURA_RADIUS * AURA_RADIUS) {
+            if (offsetX * offsetX + offsetZ * offsetZ > AURA_RADIUS * AURA_RADIUS) {
                 continue;
             }
 
+            BlockPos targetColumn = heartPos.offset(offsetX, 0, offsetZ);
             BlockPos targetPos = findSurfaceGrass(level, targetColumn, heartPos.getY());
             if (targetPos == null) {
                 continue;
