@@ -1,8 +1,8 @@
 {
   "render_type": "minecraft:cutout",
-  "parent": "minecraft:block/cross",
+  "parent": "minecraft:block/carpet",
   "textures": {
-    "cross": "minecraft:block/weeping_vines_plant",
-    "particle": "minecraft:block/weeping_vines_plant"
+    "wool": "eldergrove:block/tainted_fibre",
+    "particle": "eldergrove:block/tainted_fibre"
   }
 }
