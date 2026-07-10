@@ -12,5 +12,6 @@ public final class Eldergrove {
         EldergroveBlocks.register(modBus);
         EldergroveItems.register(modBus);
         EldergroveCreativeTabs.register(modBus);
+        EldergroveFeatures.register(modBus);
     }
 }
