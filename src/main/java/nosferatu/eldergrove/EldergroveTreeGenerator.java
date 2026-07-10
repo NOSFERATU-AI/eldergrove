@@ -1,9 +1,9 @@
 package nosferatu.eldergrove;
 
 import net.minecraft.core.BlockPos;
-import net.minecraft.server.level.ServerLevel;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.util.RandomSource;
+import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.block.LeavesBlock;
 import net.minecraft.world.level.block.state.BlockState;
 
@@ -11,7 +11,7 @@ public final class EldergroveTreeGenerator {
     private EldergroveTreeGenerator() {
     }
 
-    public static boolean grow(ServerLevel level, BlockPos origin, RandomSource random) {
+    public static boolean grow(LevelAccessor level, BlockPos origin, RandomSource random) {
         int height = 8 + random.nextInt(7);
 
         if (!canGrow(level, origin, height)) {
@@ -24,7 +24,7 @@ public final class EldergroveTreeGenerator {
         return true;
     }
 
-    private static void placeTrunk(ServerLevel level, BlockPos origin, int height, RandomSource random) {
+    private static void placeTrunk(LevelAccessor level, BlockPos origin, int height, RandomSource random) {
         BlockState log = EldergroveBlocks.ELDERWOOD_LOG.get().defaultBlockState();
         BlockState heart = EldergroveBlocks.GROVE_HEART.get().defaultBlockState();
         boolean placedHeart = false;
@@ -65,14 +65,14 @@ public final class EldergroveTreeGenerator {
         }
     }
 
-    private static void placeCanopyBranch(ServerLevel level, BlockPos start, int dx, int dz, int length, BlockState log) {
+    private static void placeCanopyBranch(LevelAccessor level, BlockPos start, int dx, int dz, int length, BlockState log) {
         for (int step = 1; step <= length; step++) {
             int y = step == length ? 1 : 0;
             setTrunkBlock(level, start.offset(dx * step, y, dz * step), log);
         }
     }
 
-    private static void placeCrown(ServerLevel level, BlockPos origin, int height, RandomSource random) {
+    private static void placeCrown(LevelAccessor level, BlockPos origin, int height, RandomSource random) {
         // Center is offset half a block because the trunk is 2x2. This keeps the crown round around the trunk.
         double centerX = origin.getX() + 0.5D;
         double centerY = origin.getY() + height - 1.0D;
@@ -136,7 +136,7 @@ public final class EldergroveTreeGenerator {
         return value / 1000.0D;
     }
 
-    private static boolean canGrow(ServerLevel level, BlockPos origin, int height) {
+    private static boolean canGrow(LevelAccessor level, BlockPos origin, int height) {
         if (!canSustainTree(level.getBlockState(origin.below()))) {
             return false;
         }
@@ -163,24 +163,24 @@ public final class EldergroveTreeGenerator {
                 || state.is(EldergroveBlocks.ELDERGROVE_GRASS_DEEP.get());
     }
 
-    private static boolean canReplaceTreeSpace(ServerLevel level, BlockPos pos) {
+    private static boolean canReplaceTreeSpace(LevelAccessor level, BlockPos pos) {
         BlockState state = level.getBlockState(pos);
         return state.isAir() || state.canBeReplaced() || state.is(BlockTags.LEAVES) || state.is(EldergroveBlocks.ELDERWOOD_SAPLING.get());
     }
 
-    private static boolean canReplaceWithLeaves(ServerLevel level, BlockPos pos) {
+    private static boolean canReplaceWithLeaves(LevelAccessor level, BlockPos pos) {
         BlockState state = level.getBlockState(pos);
         return state.isAir() || state.canBeReplaced() || state.is(BlockTags.LEAVES);
     }
 
-    private static void setTrunkBlock(ServerLevel level, BlockPos pos, BlockState state) {
+    private static void setTrunkBlock(LevelAccessor level, BlockPos pos, BlockState state) {
         BlockState current = level.getBlockState(pos);
         if (current.isAir() || current.canBeReplaced() || current.is(BlockTags.LEAVES) || current.is(EldergroveBlocks.ELDERWOOD_SAPLING.get())) {
             level.setBlock(pos, state, 3);
         }
     }
 
-    private static void setLeaves(ServerLevel level, BlockPos pos) {
+    private static void setLeaves(LevelAccessor level, BlockPos pos) {
         int distance = distanceToNearestLog(level, pos);
         level.setBlock(
                 pos,
@@ -191,7 +191,7 @@ public final class EldergroveTreeGenerator {
         );
     }
 
-    private static int distanceToNearestLog(ServerLevel level, BlockPos pos) {
+    private static int distanceToNearestLog(LevelAccessor level, BlockPos pos) {
         int best = 7;
         BlockPos.MutableBlockPos mutable = new BlockPos.MutableBlockPos();
         for (int y = -6; y <= 6; y++) {
