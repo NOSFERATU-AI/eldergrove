@@ -1,14 +1,14 @@
 {
   "has_precipitation": true,
-  "temperature": 0.8,
-  "downfall": 0.9,
+  "temperature": 0.7,
+  "downfall": 0.6,
   "effects": {
     "sky_color": 7972607,
     "fog_color": 12638463,
-    "water_color": 4159204,
-    "water_fog_color": 329011,
-    "grass_color": 5630072,
-    "foliage_color": 6477497,
+    "water_color": 30702,
+    "water_fog_color": 30702,
+    "grass_color": 5635969,
+    "foliage_color": 6750149,
     "grass_color_modifier": "none",
     "ambient_mood_sound": {
       "sound": "minecraft:ambient.cave",
