@@ -13,6 +13,12 @@ import net.minecraft.world.level.block.state.properties.EnumProperty;
 
 public final class EldergroveOakTreeGenerator {
     private static final EnumProperty<Direction.Axis> AXIS = RotatedPillarBlock.AXIS;
+    private static final Direction[] HORIZONTAL_DIRECTIONS = new Direction[]{
+            Direction.NORTH,
+            Direction.SOUTH,
+            Direction.WEST,
+            Direction.EAST
+    };
 
     private EldergroveOakTreeGenerator() {
     }
@@ -31,7 +37,7 @@ public final class EldergroveOakTreeGenerator {
         int branchBase = height - 5;
         int branches = 4 + random.nextInt(3);
         for (int i = 0; i < branches; i++) {
-            Direction dir = Direction.Plane.HORIZONTAL.getRandomDirection(random);
+            Direction dir = HORIZONTAL_DIRECTIONS[random.nextInt(HORIZONTAL_DIRECTIONS.length)];
             int startY = branchBase + random.nextInt(4);
             int length = 3 + random.nextInt(3);
             BlockPos end = placeFancyBranch(level, origin.above(startY), dir, length);
