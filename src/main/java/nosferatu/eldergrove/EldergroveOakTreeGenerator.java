@@ -18,7 +18,7 @@ public final class EldergroveOakTreeGenerator {
     }
 
     public static boolean grow(LevelAccessor level, BlockPos origin, RandomSource random) {
-        int height = 8 + random.nextInt(5);
+        int height = 10 + random.nextInt(5);
         if (!canGrow(level, origin, height)) {
             return false;
         }
@@ -28,28 +28,34 @@ public final class EldergroveOakTreeGenerator {
             setBlock(level, origin.above(y), verticalLog);
         }
 
-        placeLargeOakBranches(level, origin, height, random);
-        placeLargeOakCrown(level, origin.above(height - 2), random);
+        int branchBase = height - 5;
+        int branches = 4 + random.nextInt(3);
+        for (int i = 0; i < branches; i++) {
+            Direction dir = Direction.Plane.HORIZONTAL.getRandomDirection(random);
+            int startY = branchBase + random.nextInt(4);
+            int length = 3 + random.nextInt(3);
+            BlockPos end = placeFancyBranch(level, origin.above(startY), dir, length);
+            placeLeafBlob(level, end.above(), 2 + random.nextInt(2), random);
+        }
+
+        placeTopCrown(level, origin.above(height - 2), random);
         return true;
     }
 
-    private static void placeLargeOakBranches(LevelAccessor level, BlockPos origin, int height, RandomSource random) {
-        int baseY = height - 4;
-        placeBranch(level, origin.above(baseY), 1, 0, 3 + random.nextInt(2), Direction.Axis.X);
-        placeBranch(level, origin.above(baseY + 1), -1, 0, 2 + random.nextInt(2), Direction.Axis.X);
-        placeBranch(level, origin.above(baseY), 0, 1, 3 + random.nextInt(2), Direction.Axis.Z);
-        placeBranch(level, origin.above(baseY + 1), 0, -1, 2 + random.nextInt(2), Direction.Axis.Z);
-    }
-
-    private static void placeBranch(LevelAccessor level, BlockPos start, int dx, int dz, int length, Direction.Axis axis) {
+    private static BlockPos placeFancyBranch(LevelAccessor level, BlockPos start, Direction dir, int length) {
+        Direction.Axis axis = dir.getAxis();
         BlockState log = Blocks.OAK_LOG.defaultBlockState().setValue(AXIS, axis);
+        BlockPos last = start;
         for (int step = 1; step <= length; step++) {
             int y = step > 2 ? 1 : 0;
-            setBlock(level, start.offset(dx * step, y, dz * step), log);
+            last = start.relative(dir, step).above(y);
+            setBlock(level, last, log);
         }
+        return last;
     }
 
-    private static void placeLargeOakCrown(LevelAccessor level, BlockPos center, RandomSource random) {
+    private static void placeTopCrown(LevelAccessor level, BlockPos center, RandomSource random) {
+        // Fancy-oak style: layered, irregular, with side lobes instead of one cube of leaves.
         for (int y = -3; y <= 3; y++) {
             int radius;
             if (y <= -2) {
@@ -74,19 +80,15 @@ public final class EldergroveOakTreeGenerator {
                 }
             }
         }
-
-        // Extra side clusters give the oak the large Magical Forest silhouette instead of the tiny vanilla oak shape.
-        placeLeafCluster(level, center.offset(3, -1, 0), random);
-        placeLeafCluster(level, center.offset(-3, 0, 0), random);
-        placeLeafCluster(level, center.offset(0, -1, 3), random);
-        placeLeafCluster(level, center.offset(0, 0, -3), random);
     }
 
-    private static void placeLeafCluster(LevelAccessor level, BlockPos center, RandomSource random) {
+    private static void placeLeafBlob(LevelAccessor level, BlockPos center, int radius, RandomSource random) {
         for (int y = -1; y <= 1; y++) {
-            for (int x = -2; x <= 2; x++) {
-                for (int z = -2; z <= 2; z++) {
-                    if (Math.abs(x) + Math.abs(z) > 3 || random.nextInt(7) == 0) {
+            int layerRadius = y == 0 ? radius : Math.max(1, radius - 1);
+            for (int x = -layerRadius; x <= layerRadius; x++) {
+                for (int z = -layerRadius; z <= layerRadius; z++) {
+                    int edge = Math.abs(x) + Math.abs(z);
+                    if (edge > layerRadius + 1 || (edge == layerRadius + 1 && random.nextBoolean())) {
                         continue;
                     }
                     BlockPos pos = center.offset(x, y, z);
@@ -103,7 +105,7 @@ public final class EldergroveOakTreeGenerator {
             return false;
         }
         for (int y = 0; y <= height + 4; y++) {
-            int radius = y < height - 4 ? 1 : 5;
+            int radius = y < height - 5 ? 1 : 6;
             for (int x = -radius; x <= radius; x++) {
                 for (int z = -radius; z <= radius; z++) {
                     if (!canReplace(level, origin.offset(x, y, z))) {
