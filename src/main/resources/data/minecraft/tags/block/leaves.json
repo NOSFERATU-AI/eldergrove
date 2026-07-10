@@ -1,6 +1,7 @@
 {
   "replace": false,
   "values": [
-    "eldergrove:elderwood_leaves"
+    "eldergrove:elderwood_leaves",
+    "eldergrove:greatwood_leaves"
   ]
 }
