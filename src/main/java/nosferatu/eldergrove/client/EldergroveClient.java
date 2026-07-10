@@ -14,9 +14,9 @@ import nosferatu.eldergrove.EldergroveItems;
 
 @EventBusSubscriber(modid = Eldergrove.MODID, bus = EventBusSubscriber.Bus.MOD, value = Dist.CLIENT)
 public final class EldergroveClient {
-    private static final int MAGICAL_FOREST_EDGE_COLOR = 0x6FCB5D;
-    private static final int MAGICAL_FOREST_COLOR = 0x55E878;
-    private static final int MAGICAL_FOREST_DEEP_COLOR = 0x4FCF9A;
+    private static final int MAGICAL_FOREST_EDGE_COLOR = 0x74B85E;
+    private static final int MAGICAL_FOREST_COLOR = 0x55D978;
+    private static final int MAGICAL_FOREST_DEEP_COLOR = 0x43C99D;
     private static final int MAGICAL_FOREST_LEAF_COLOR = 0x62D6B9;
 
     private EldergroveClient() {
@@ -61,10 +61,16 @@ public final class EldergroveClient {
     }
 
     private static int eldergroveGrassColor(BlockState state, BlockAndTintGetter level, BlockPos pos, int tintIndex) {
-        if (pos == null) {
-            return MAGICAL_FOREST_COLOR;
+        int target = magicalGrassTarget(state, pos);
+        if (level == null || pos == null) {
+            return target;
         }
-        return magicalGrassTarget(pos);
+
+        int vanilla = BiomeColors.getAverageGrassColor(level, pos);
+        double amount = state.is(EldergroveBlocks.ELDERGROVE_GRASS_FAINT.get()) ? 0.45D
+                : state.is(EldergroveBlocks.ELDERGROVE_GRASS.get()) ? 0.72D
+                : 0.92D;
+        return blend(vanilla, target, amount);
     }
 
     private static int plantColor(BlockState state, BlockAndTintGetter level, BlockPos pos, int tintIndex) {
@@ -72,33 +78,49 @@ public final class EldergroveClient {
             return MAGICAL_FOREST_COLOR;
         }
 
-        if (isStandingOnEldergroveGrass(level, pos)) {
-            return blend(BiomeColors.getAverageGrassColor(level, pos), magicalGrassTarget(pos.below()), 0.8D);
+        BlockState below = getBelowSafely(level, pos);
+        if (below == null) {
+            return BiomeColors.getAverageGrassColor(level, pos);
+        }
+
+        if (below.is(EldergroveBlocks.ELDERGROVE_GRASS_FAINT.get())) {
+            return blend(BiomeColors.getAverageGrassColor(level, pos), MAGICAL_FOREST_EDGE_COLOR, 0.35D);
+        }
+        if (below.is(EldergroveBlocks.ELDERGROVE_GRASS.get())) {
+            return blend(BiomeColors.getAverageGrassColor(level, pos), MAGICAL_FOREST_COLOR, 0.6D);
+        }
+        if (below.is(EldergroveBlocks.ELDERGROVE_GRASS_DEEP.get())) {
+            return blend(BiomeColors.getAverageGrassColor(level, pos), MAGICAL_FOREST_DEEP_COLOR, 0.8D);
         }
 
         return BiomeColors.getAverageGrassColor(level, pos);
     }
 
-    private static boolean isStandingOnEldergroveGrass(BlockAndTintGetter level, BlockPos pos) {
+    private static BlockState getBelowSafely(BlockAndTintGetter level, BlockPos pos) {
         try {
-            BlockState below = level.getBlockState(pos.below());
-            return below.is(EldergroveBlocks.ELDERGROVE_GRASS_FAINT.get())
-                    || below.is(EldergroveBlocks.ELDERGROVE_GRASS.get())
-                    || below.is(EldergroveBlocks.ELDERGROVE_GRASS_DEEP.get());
+            return level.getBlockState(pos.below());
         } catch (RuntimeException ignored) {
-            return false;
+            return null;
         }
     }
 
-    private static int magicalGrassTarget(BlockPos pos) {
+    private static int magicalGrassTarget(BlockState state, BlockPos pos) {
+        int base = state.is(EldergroveBlocks.ELDERGROVE_GRASS_FAINT.get()) ? MAGICAL_FOREST_EDGE_COLOR
+                : state.is(EldergroveBlocks.ELDERGROVE_GRASS.get()) ? MAGICAL_FOREST_COLOR
+                : MAGICAL_FOREST_DEEP_COLOR;
+
+        if (pos == null) {
+            return base;
+        }
+
         int variant = Math.floorMod(pos.getX() * 734287 + pos.getY() * 159733 + pos.getZ() * 912271, 3);
         if (variant == 0) {
-            return MAGICAL_FOREST_EDGE_COLOR;
+            return blend(base, 0x8ABE5F, 0.18D);
         }
         if (variant == 1) {
-            return MAGICAL_FOREST_COLOR;
+            return blend(base, 0x52E890, 0.16D);
         }
-        return MAGICAL_FOREST_DEEP_COLOR;
+        return blend(base, 0x45C8B1, 0.14D);
     }
 
     private static int blend(int from, int to, double amount) {
