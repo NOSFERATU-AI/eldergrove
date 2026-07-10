@@ -20,6 +20,7 @@ public final class EldergroveTreeGenerator {
 
         placeTrunk(level, origin, height, random);
         placeCrown(level, origin, height, random);
+        EldergroveGroundPlants.placeNearTree(level, origin, random, 8, 5);
 
         return true;
     }
