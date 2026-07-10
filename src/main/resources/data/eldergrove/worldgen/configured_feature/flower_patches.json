@@ -43,6 +43,12 @@
               },
               {
                 "data": {
+                  "Name": "minecraft:poppy"
+                },
+                "weight": 2
+              },
+              {
+                "data": {
                   "Name": "minecraft:dandelion"
                 },
                 "weight": 1
