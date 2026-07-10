@@ -23,51 +23,51 @@ public final class GreatwoodTreeGenerator {
     }
 
     public static boolean grow(LevelAccessor level, BlockPos origin, RandomSource random) {
-        int height = 18 + random.nextInt(8);
+        int height = 16 + random.nextInt(5);
         if (!canGrow(level, origin, height)) {
             return false;
         }
 
-        placeTrunk(level, origin, height, random);
-        placeMainBranches(level, origin, height, random);
-        placeLayeredCanopy(level, origin, height, random);
+        placeMassiveTrunk(level, origin, height, random);
+        placeGreatBranches(level, origin, height, random);
+        placeGreatwoodCrown(level, origin, height, random);
         EldergroveGroundPlants.placeVishroomsNearTree(level, origin, random, 8, 9);
         return true;
     }
 
-    private static void placeTrunk(LevelAccessor level, BlockPos origin, int height, RandomSource random) {
+    private static void placeMassiveTrunk(LevelAccessor level, BlockPos origin, int height, RandomSource random) {
         BlockState verticalLog = log(Direction.Axis.Y);
 
-        // Greatwood is a huge old trunk: 2x2 core, heavier base, then tapering shoulder blocks.
+        // Old Thaumcraft-like greatwood: a heavy 2x2 core with buttress roots, not a thin pole.
         for (int y = 0; y < height; y++) {
             setLog(level, origin.offset(0, y, 0), verticalLog);
             setLog(level, origin.offset(1, y, 0), verticalLog);
             setLog(level, origin.offset(0, y, 1), verticalLog);
             setLog(level, origin.offset(1, y, 1), verticalLog);
 
-            if (y < 5) {
+            if (y < 4) {
                 setLog(level, origin.offset(-1, y, 0), verticalLog);
                 setLog(level, origin.offset(2, y, 1), verticalLog);
                 setLog(level, origin.offset(0, y, -1), verticalLog);
                 setLog(level, origin.offset(1, y, 2), verticalLog);
-            } else if (y > height - 7 && y < height - 2 && random.nextInt(3) != 0) {
-                setLog(level, origin.offset(-1, y, 0), verticalLog);
-                setLog(level, origin.offset(2, y, 1), verticalLog);
+            }
+
+            if (y > 6 && y < height - 3 && random.nextInt(4) == 0) {
+                Direction side = CARDINALS[random.nextInt(CARDINALS.length)];
+                setLog(level, origin.offset(1, y, 1).relative(side), verticalLog);
             }
         }
 
-        // Big root feet at ground level, like the heavy base of Thaumcraft greatwood.
-        placeRoot(level, origin.offset(0, 1, 0), Direction.WEST, 4, random);
-        placeRoot(level, origin.offset(1, 1, 1), Direction.EAST, 4, random);
-        placeRoot(level, origin.offset(0, 1, 1), Direction.SOUTH, 3 + random.nextInt(2), random);
-        placeRoot(level, origin.offset(1, 1, 0), Direction.NORTH, 3 + random.nextInt(2), random);
+        placeRoot(level, origin.offset(0, 1, 0), Direction.WEST, 5, random);
+        placeRoot(level, origin.offset(1, 1, 1), Direction.EAST, 5, random);
+        placeRoot(level, origin.offset(0, 1, 1), Direction.SOUTH, 4 + random.nextInt(2), random);
+        placeRoot(level, origin.offset(1, 1, 0), Direction.NORTH, 4 + random.nextInt(2), random);
     }
 
     private static void placeRoot(LevelAccessor level, BlockPos start, Direction direction, int length, RandomSource random) {
         BlockState horizontalLog = log(direction.getAxis());
-        BlockPos pos = start;
         for (int i = 1; i <= length; i++) {
-            pos = start.relative(direction, i).below(i > 2 ? 1 : 0);
+            BlockPos pos = start.relative(direction, i).below(i > 2 ? 1 : 0);
             setLog(level, pos, horizontalLog);
             if (i < length && random.nextBoolean()) {
                 setLog(level, pos.below(), horizontalLog);
@@ -75,109 +75,135 @@ public final class GreatwoodTreeGenerator {
         }
     }
 
-    private static void placeMainBranches(LevelAccessor level, BlockPos origin, int height, RandomSource random) {
-        int firstY = height - 10;
-        int secondY = height - 7;
-        int thirdY = height - 4;
+    private static void placeGreatBranches(LevelAccessor level, BlockPos origin, int height, RandomSource random) {
+        int lowY = height - 10;
+        int midY = height - 7;
+        int highY = height - 4;
 
+        // The lower ring creates the wide, visible wooden arms seen in the old greatwood silhouette.
         for (Direction direction : CARDINALS) {
-            int y = firstY + random.nextInt(3);
-            int length = 5 + random.nextInt(4);
-            BlockPos end = placeBranch(level, origin.offset(direction.getStepX() > 0 ? 1 : 0, y, direction.getStepZ() > 0 ? 1 : 0), direction, length, random);
-            placeBranchCanopy(level, end.above(1 + random.nextInt(2)), 3 + random.nextInt(2), random);
+            int y = lowY + random.nextInt(3);
+            int length = 8 + random.nextInt(4);
+            BlockPos start = branchStart(origin, direction, y);
+            BlockPos end = placeThickBranch(level, start, direction, length, random, true);
+            placeFlatCrownBlob(level, end.above(1), 5 + random.nextInt(2), 4 + random.nextInt(2), random);
         }
 
+        // A second, uneven ring overlaps the lower one so the canopy becomes one huge irregular mass.
         for (Direction direction : CARDINALS) {
-            if (random.nextInt(3) == 0) {
+            if (random.nextInt(4) == 0) {
                 continue;
             }
-            int y = secondY + random.nextInt(3);
-            int length = 4 + random.nextInt(4);
-            BlockPos end = placeBranch(level, origin.offset(direction.getStepX() > 0 ? 1 : 0, y, direction.getStepZ() > 0 ? 1 : 0), direction, length, random);
-            placeBranchCanopy(level, end.above(1), 3, random);
+            int y = midY + random.nextInt(3);
+            int length = 6 + random.nextInt(4);
+            BlockPos start = branchStart(origin, direction, y);
+            BlockPos end = placeThickBranch(level, start, direction, length, random, false);
+            placeFlatCrownBlob(level, end.above(1), 4 + random.nextInt(2), 3 + random.nextInt(2), random);
+        }
+
+        // Diagonal limbs break the cross shape and make it feel more natural.
+        for (int i = 0; i < 3; i++) {
+            Direction first = random.nextBoolean() ? Direction.NORTH : Direction.SOUTH;
+            Direction second = random.nextBoolean() ? Direction.EAST : Direction.WEST;
+            BlockPos end = placeDiagonalBranch(level, origin.offset(0, midY + random.nextInt(4), 0), first, second, 5 + random.nextInt(4), random);
+            placeFlatCrownBlob(level, end.above(1), 4, 3 + random.nextInt(2), random);
         }
 
         Direction topDirection = CARDINALS[random.nextInt(CARDINALS.length)];
-        BlockPos topEnd = placeBranch(level, origin.offset(0, thirdY, 0), topDirection, 6 + random.nextInt(3), random);
-        placeBranchCanopy(level, topEnd.above(1), 3 + random.nextInt(2), random);
-
-        if (random.nextBoolean()) {
-            Direction diagonalA = random.nextBoolean() ? Direction.NORTH : Direction.SOUTH;
-            Direction diagonalB = random.nextBoolean() ? Direction.EAST : Direction.WEST;
-            BlockPos diagonalEnd = placeDiagonalBranch(level, origin.offset(0, secondY + 1, 0), diagonalA, diagonalB, 4 + random.nextInt(3), random);
-            placeBranchCanopy(level, diagonalEnd.above(1), 3, random);
-        }
+        BlockPos topEnd = placeThickBranch(level, origin.offset(0, highY, 0), topDirection, 6 + random.nextInt(3), random, false);
+        placeFlatCrownBlob(level, topEnd.above(1), 4 + random.nextInt(2), 3, random);
     }
 
-    private static BlockPos placeBranch(LevelAccessor level, BlockPos start, Direction direction, int length, RandomSource random) {
+    private static BlockPos branchStart(BlockPos origin, Direction direction, int y) {
+        return origin.offset(direction.getStepX() > 0 ? 1 : 0, y, direction.getStepZ() > 0 ? 1 : 0);
+    }
+
+    private static BlockPos placeThickBranch(LevelAccessor level, BlockPos start, Direction direction, int length, RandomSource random, boolean heavy) {
         BlockState horizontalLog = log(direction.getAxis());
         BlockPos last = start;
         for (int i = 1; i <= length; i++) {
-            int rise = i / 3;
+            int rise = i / 4;
             last = start.relative(direction, i).above(rise);
             setLog(level, last, horizontalLog);
-            if (i > 2 && random.nextInt(3) == 0) {
+
+            if (heavy && i < length - 1) {
                 setLog(level, last.below(), horizontalLog);
+            }
+            if (i < 4) {
+                setLog(level, last.relative(direction.getClockWise()), horizontalLog);
+                setLog(level, last.relative(direction.getCounterClockWise()), horizontalLog);
+            }
+            if (i > 3 && i < length - 2 && random.nextInt(4) == 0) {
+                Direction side = random.nextBoolean() ? direction.getClockWise() : direction.getCounterClockWise();
+                placeSmallSideBranch(level, last, side, 2 + random.nextInt(3), random);
             }
         }
         return last;
     }
 
+    private static void placeSmallSideBranch(LevelAccessor level, BlockPos start, Direction direction, int length, RandomSource random) {
+        BlockState horizontalLog = log(direction.getAxis());
+        for (int i = 1; i <= length; i++) {
+            BlockPos pos = start.relative(direction, i).above(i / 3);
+            setLog(level, pos, horizontalLog);
+            if (i == length) {
+                placeFlatCrownBlob(level, pos.above(), 3, 2, random);
+            }
+        }
+    }
+
     private static BlockPos placeDiagonalBranch(LevelAccessor level, BlockPos start, Direction first, Direction second, int length, RandomSource random) {
         BlockPos last = start;
         for (int i = 1; i <= length; i++) {
-            int rise = i / 3;
-            last = start.relative(first, i).relative(second, i).above(rise);
+            int rise = i / 4;
+            last = start.relative(first, i).relative(second, i / 2).above(rise);
             setLog(level, last, log(i % 2 == 0 ? first.getAxis() : second.getAxis()));
-            if (random.nextInt(4) == 0) {
+            if (i < 4) {
                 setLog(level, last.below(), log(first.getAxis()));
             }
         }
         return last;
     }
 
-    private static void placeLayeredCanopy(LevelAccessor level, BlockPos origin, int height, RandomSource random) {
-        // Greatwood should read as a huge, tiered old crown, not a single sphere.
-        placeCanopyLayer(level, origin.above(height - 8), 5, random);
-        placeCanopyLayer(level, origin.above(height - 6), 7, random);
-        placeCanopyLayer(level, origin.above(height - 4), 8, random);
-        placeCanopyLayer(level, origin.above(height - 2), 7, random);
-        placeCanopyLayer(level, origin.above(height), 5, random);
-        placeCanopyLayer(level, origin.above(height + 2), 3, random);
+    private static void placeGreatwoodCrown(LevelAccessor level, BlockPos origin, int height, RandomSource random) {
+        // Several overlapping, flattened masses. This avoids the ugly single sphere and matches the old greatwood canopy better.
+        int baseY = height - 9;
+        placeFlatCrownBlob(level, origin.offset(0, baseY, 0), 6, 4, random);
+        placeFlatCrownBlob(level, origin.offset(3, baseY + 1, 3), 6, 4, random);
+        placeFlatCrownBlob(level, origin.offset(-4, baseY + 1, 2), 6, 4, random);
+        placeFlatCrownBlob(level, origin.offset(2, baseY + 2, -4), 6, 4, random);
+        placeFlatCrownBlob(level, origin.offset(-3, baseY + 2, -3), 5, 4, random);
+
+        placeFlatCrownBlob(level, origin.offset(0, height - 4, 0), 7, 4, random);
+        placeFlatCrownBlob(level, origin.offset(5, height - 3, 0), 5, 3, random);
+        placeFlatCrownBlob(level, origin.offset(-5, height - 3, 1), 5, 3, random);
+        placeFlatCrownBlob(level, origin.offset(1, height - 2, 5), 5, 3, random);
+        placeFlatCrownBlob(level, origin.offset(0, height, 0), 4, 3, random);
     }
 
-    private static void placeCanopyLayer(LevelAccessor level, BlockPos center, int radius, RandomSource random) {
-        for (int y = -1; y <= 1; y++) {
-            int layerRadius = y == 0 ? radius : Math.max(2, radius - 2);
+    private static void placeFlatCrownBlob(LevelAccessor level, BlockPos center, int radius, int verticalRadius, RandomSource random) {
+        for (int y = -verticalRadius; y <= verticalRadius; y++) {
+            int layerRadius = Math.max(2, radius - Math.abs(y));
             for (int x = -layerRadius; x <= layerRadius + 1; x++) {
                 for (int z = -layerRadius; z <= layerRadius + 1; z++) {
-                    int manhattan = Math.abs(x) + Math.abs(z);
-                    boolean hardCorner = Math.abs(x) > layerRadius - 1 && Math.abs(z) > layerRadius - 1;
-                    boolean raggedEdge = manhattan > layerRadius + 2 && random.nextBoolean();
-                    if (hardCorner || raggedEdge || random.nextInt(32) == 0) {
+                    int distance = Math.abs(x) + Math.abs(z);
+                    boolean farCorner = Math.abs(x) > layerRadius - 1 && Math.abs(z) > layerRadius - 1;
+                    boolean openGap = distance > layerRadius + 2 && random.nextBoolean();
+                    boolean raggedHole = distance > 2 && random.nextInt(42) == 0;
+                    if (farCorner || openGap || raggedHole) {
                         continue;
                     }
-                    BlockPos pos = center.offset(x, y, z);
-                    if (canReplace(level, pos)) {
-                        setLeaves(level, pos);
-                    }
-                }
-            }
-        }
-    }
 
-    private static void placeBranchCanopy(LevelAccessor level, BlockPos center, int radius, RandomSource random) {
-        for (int y = -2; y <= 2; y++) {
-            int layerRadius = y == 0 ? radius : Math.max(1, radius - Math.abs(y));
-            for (int x = -layerRadius; x <= layerRadius; x++) {
-                for (int z = -layerRadius; z <= layerRadius; z++) {
-                    int edge = Math.abs(x) + Math.abs(z);
-                    if (edge > layerRadius + 1 || (edge == layerRadius + 1 && random.nextBoolean())) {
-                        continue;
-                    }
                     BlockPos pos = center.offset(x, y, z);
                     if (canReplace(level, pos)) {
                         setLeaves(level, pos);
+                    }
+
+                    if (y < 0 && distance > layerRadius - 2 && random.nextInt(8) == 0) {
+                        BlockPos hanging = pos.below();
+                        if (canReplace(level, hanging)) {
+                            setLeaves(level, hanging);
+                        }
                     }
                 }
             }
@@ -188,8 +214,8 @@ public final class GreatwoodTreeGenerator {
         if (!level.getBlockState(origin.below()).is(BlockTags.DIRT)) {
             return false;
         }
-        for (int y = 0; y <= height + 5; y++) {
-            int radius = y < 5 ? 5 : y > height - 10 ? 10 : 3;
+        for (int y = 0; y <= height + 4; y++) {
+            int radius = y < 5 ? 6 : y > height - 11 ? 12 : 5;
             for (int x = -radius; x <= radius + 1; x++) {
                 for (int z = -radius; z <= radius + 1; z++) {
                     if (!canReplace(level, origin.offset(x, y, z))) {
