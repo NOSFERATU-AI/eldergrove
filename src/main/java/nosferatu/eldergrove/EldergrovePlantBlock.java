@@ -1,5 +1,6 @@
 package nosferatu.eldergrove;
 
+import com.mojang.serialization.MapCodec;
 import net.minecraft.core.BlockPos;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.world.level.BlockGetter;
@@ -11,6 +12,11 @@ import net.minecraft.world.level.block.state.BlockState;
 public class EldergrovePlantBlock extends BushBlock {
     public EldergrovePlantBlock(BlockBehaviour.Properties properties) {
         super(properties);
+    }
+
+    @Override
+    protected MapCodec<? extends BushBlock> codec() {
+        return null;
     }
 
     @Override
