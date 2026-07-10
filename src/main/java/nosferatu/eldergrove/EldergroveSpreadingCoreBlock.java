@@ -40,7 +40,6 @@ public class EldergroveSpreadingCoreBlock extends Block {
         for (int i = 0; i < SPREAD_ATTEMPTS; i++) {
             int offsetX = random.nextInt(AURA_RADIUS * 2 + 1) - AURA_RADIUS;
             int offsetZ = random.nextInt(AURA_RADIUS * 2 + 1) - AURA_RADIUS;
-
             if (offsetX * offsetX + offsetZ * offsetZ > AURA_RADIUS * AURA_RADIUS) {
                 continue;
             }
@@ -51,7 +50,11 @@ public class EldergroveSpreadingCoreBlock extends Block {
                 continue;
             }
 
-            level.setBlock(targetPos, EldergroveBlocks.ELDERGROVE_GRASS.get().defaultBlockState(), 3);
+            BlockState targetState = level.getBlockState(targetPos);
+            BlockState nextState = getNextAuraStage(targetState, random);
+            if (nextState != null) {
+                level.setBlock(targetPos, nextState, 3);
+            }
         }
     }
 
@@ -62,7 +65,7 @@ public class EldergroveSpreadingCoreBlock extends Block {
         for (int y = maxY; y >= minY; y--) {
             BlockPos pos = new BlockPos(columnPos.getX(), y, columnPos.getZ());
             BlockState state = level.getBlockState(pos);
-            if (canBecomeEldergroveGrass(state) && !level.getBlockState(pos.above()).isSolidRender(level, pos.above())) {
+            if (canBeAffectedByAura(state) && !level.getBlockState(pos.above()).isSolidRender(level, pos.above())) {
                 return pos;
             }
         }
@@ -70,9 +73,27 @@ public class EldergroveSpreadingCoreBlock extends Block {
         return null;
     }
 
-    private static boolean canBecomeEldergroveGrass(BlockState state) {
+    private static BlockState getNextAuraStage(BlockState state, RandomSource random) {
+        if (state.is(Blocks.GRASS_BLOCK) || state.is(Blocks.PODZOL) || state.is(Blocks.MYCELIUM)) {
+            return EldergroveBlocks.ELDERGROVE_GRASS_FAINT.get().defaultBlockState();
+        }
+
+        if (state.is(EldergroveBlocks.ELDERGROVE_GRASS_FAINT.get())) {
+            return random.nextInt(3) == 0 ? EldergroveBlocks.ELDERGROVE_GRASS.get().defaultBlockState() : null;
+        }
+
+        if (state.is(EldergroveBlocks.ELDERGROVE_GRASS.get())) {
+            return random.nextInt(5) == 0 ? EldergroveBlocks.ELDERGROVE_GRASS_DEEP.get().defaultBlockState() : null;
+        }
+
+        return null;
+    }
+
+    private static boolean canBeAffectedByAura(BlockState state) {
         return state.is(Blocks.GRASS_BLOCK)
                 || state.is(Blocks.PODZOL)
-                || state.is(Blocks.MYCELIUM);
+                || state.is(Blocks.MYCELIUM)
+                || state.is(EldergroveBlocks.ELDERGROVE_GRASS_FAINT.get())
+                || state.is(EldergroveBlocks.ELDERGROVE_GRASS.get());
     }
 }
