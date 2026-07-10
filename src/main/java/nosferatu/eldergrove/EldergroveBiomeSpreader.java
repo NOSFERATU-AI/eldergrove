@@ -40,7 +40,8 @@ public final class EldergroveBiomeSpreader {
 
             for (int localQuartY = 0; localQuartY < 4; localQuartY++) {
                 Holder<Biome> current = biomes.get(localQuartX, localQuartY, localQuartZ);
-                if (!current.is(EldergroveBiomes.ELDERGROVE)\n                        && !current.is(EldergroveBiomes.TAINTED_GROVE)) {
+                if (!current.is(EldergroveBiomes.ELDERGROVE)
+                        && !current.is(EldergroveBiomes.TAINTED_GROVE)) {
                     biomes.getAndSetUnchecked(localQuartX, localQuartY, localQuartZ, eldergrove);
                     changed = true;
                 }
