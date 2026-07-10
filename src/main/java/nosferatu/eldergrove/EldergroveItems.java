@@ -33,6 +33,16 @@ public final class EldergroveItems {
             EldergroveBlocks.ELDERWOOD_PLANKS
     );
 
+    public static final DeferredItem<BlockItem> ELDERWOOD_STAIRS = ITEMS.registerSimpleBlockItem(
+            "elderwood_stairs",
+            EldergroveBlocks.ELDERWOOD_STAIRS
+    );
+
+    public static final DeferredItem<BlockItem> ELDERWOOD_SLAB = ITEMS.registerSimpleBlockItem(
+            "elderwood_slab",
+            EldergroveBlocks.ELDERWOOD_SLAB
+    );
+
     public static final DeferredItem<BlockItem> ELDERWOOD_LOG = ITEMS.registerSimpleBlockItem(
             "elderwood_log",
             EldergroveBlocks.ELDERWOOD_LOG
@@ -46,6 +56,21 @@ public final class EldergroveItems {
     public static final DeferredItem<BlockItem> ELDERWOOD_SAPLING = ITEMS.registerSimpleBlockItem(
             "elderwood_sapling",
             EldergroveBlocks.ELDERWOOD_SAPLING
+    );
+
+    public static final DeferredItem<BlockItem> GREATWOOD_PLANKS = ITEMS.registerSimpleBlockItem(
+            "greatwood_planks",
+            EldergroveBlocks.GREATWOOD_PLANKS
+    );
+
+    public static final DeferredItem<BlockItem> GREATWOOD_STAIRS = ITEMS.registerSimpleBlockItem(
+            "greatwood_stairs",
+            EldergroveBlocks.GREATWOOD_STAIRS
+    );
+
+    public static final DeferredItem<BlockItem> GREATWOOD_SLAB = ITEMS.registerSimpleBlockItem(
+            "greatwood_slab",
+            EldergroveBlocks.GREATWOOD_SLAB
     );
 
     public static final DeferredItem<BlockItem> GREATWOOD_LOG = ITEMS.registerSimpleBlockItem(
