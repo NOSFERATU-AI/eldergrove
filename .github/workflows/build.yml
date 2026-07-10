@@ -12,26 +12,6 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Force exact TC4 greatwood textures
-        run: |
-          python3 - <<'PY'
-          import re
-          from pathlib import Path
-
-          path = Path('build.gradle')
-          text = path.read_text()
-          replacements = {
-              'greatwood_log': 'iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAIAAACQkWg2AAAALHRFWHRDcmVhdGlvbiBUaW1lAFR1ZSAxOSBNYXIgMjAxMyAxMzo1NToyMSArMDIwMAuUrWEAAAAHdElNRQfdAxMLNzo9JrGXAAAACXBIWXMAAB7BAAAewQHDaVRTAAAABGdBTUEAALGPC/xhBQAAAgFJREFUeNolUsuSmzAQlDR6AcJgr3dPe0pVzvn/H0rlsHEcGxB6p3Eoihqkme6enuE/vn8rpXxcpt9/l1KL66ySMuWC2Gr9CmpKubWGQODJOUuiP481xDS7oTE2u3523TT0yJAkGGOcsZPrURwTkoUYOl0qABrnuOKP1RMJ3NVaSUlgG6OgQghSxMHBtx2cFZzncWCtud7eHktp7TqNVqnJ9YLzceg7o4zRdJ0ngEGxlkoDjzFQ1Yp8dpwecfUxN9ZixpcdbUhJY29BjYKQktFy6Ozn+xnal82DPMYUwvEua6DrdGKNwZD8cgN6Oq3gAcDQniYCdqnsfHLQAQNELq20Cjpkn1y3gyIXpeRgjSKCd6vHu4cY0a01UrrewL7O6OfqtZRmUj+/7siGY9serJaMNbQOYXuAiCxQfHDxl1+cPxbfG42Z/LrdcVgbM+hMUs6lM7CYC+gLMaMK56Da9vg+u7fTAOtIcBjlrNWKYNgxKMGhVZOkgxeqth02ojEfE2yFzvuyPTcPnogdKQeowMAggAS12l6LA0/K4oOWdHuuKJvHAR2PQwfCPSbpQzqGwJiP8WIdFEMVNmQee/RV8vJ/fLCpgwYsCOa1+D3FiDVRknyI2EWgAgwGK0Vf92cp7W0aIQSHAtdQdZlHwKzbjl+UwS9oA2dv9R4j/IFaTA279A9cSYxn2ioP7AAAAABJRU5ErkJggg==',
-              'greatwood_log_top': 'iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAIAAACQkWg2AAAALHRFWHRDcmVhdGlvbiBUaW1lAFR1ZSAxOSBNYXIgMjAxMyAxMzo1NjowNCArMDIwMPC+PrgAAAAHdElNRQfdAxMLOA6bClntAAAACXBIWXMAAB7BAAAewQHDaVRTAAAABGdBTUEAALGPC/xhBQAAAqVJREFUeNodktlPFEEQxqe75752Z++DYwPLhsMEFIGEB2M00Tdf/T99MlFDYkyIiBKMAYzIEXZhmT3cnZ2ds3vG0qQfqrurvvrV143WlxYYY6VcZjB2WcJ0RRZ4PqYMYlkU/wdJHNM0TSHAGPOUUshYb0SNSt7QREngO73JdXeyWM/oiiAKBGqmAT27Hu4dxwglpJq3lmfoyrxVyqnV5mNv1K3U5+dqVuBPy9XZiTNubb6QCOv3B1mN9cbQA6FCRp6dqZabO0cHHzmOk/W8qJizjSUa+bXGyumXt1Z9ZWfzQVaXJEnkGUuTNJU16+DTu41H2/XVp73Lb5gX9FxdkPQomDi9q6vj96W51ZwpscTDCOOFmqlmykCcMNq7Ohq0T1gcQhmLg8hz5tZf/ps7nOZM2Z2GOAEbUi5JWMHSK63d0BsHngNIkHH/+8C+PFSMIqUJSNz2p+ABpiyFPeCGYeQ7NkK4ufUqP7vGcShTbhJeCtyBaWiMRqAsSzzWVOmqO+E4sDkd3PwoNh6CmGwUi40N6EZ4EWGCoE6zBIF4fsgHQVi2TB4gsjk1U7o//2y3fwKh5/RGt2fZypKkZuPQw4R3plGaIswSTlMEhHmMCQiDrYVaE8okNQMqYINjXwzHAZxX8yoCj1RZHDpBHExggs7J3szas2y1VVt+wuKovLhdbe06vUvKEsUoOF7ME0zKOWumwOXlECh91yEEi7IRBy6HUOw74/uL78fHm7vPv+5/GE3C05uAZHS9YKZ+GGsiUzXDHbTjwAEMCIDbbp9vPX+9v/cmZ8g3tmuPMcmb5u0wbdVFReJhQVKnc3d9N7L/TBGdEowm9i9gPjyzD8/TiFK02piHZ5mr5Lt9R1dEwoOEHsXU9QN4YE2R7voj+MKGpgzHLtz+BavqecgyqJPVAAAAAElFTkSuQmCC',
-              'greatwood_leaves': 'iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAALHRFWHRDcmVhdGlvbiBUaW1lAFR1ZSAxOSBNYXIgMjAxMyAxMzo1NzoxNiArMDIwMERJRDEAAAAHdElNRQfdAxMLORkBwu1rAAAACXBIWXMAAB7BAAAewQHDaVRTAAAABGdBTUEAALGPC/xhBQAAAj5JREFUeNpdU9tKclEQnrW1PGUoInqjUUKX0euIZ32CsFQsDUKUyB4gQUJDfJXuPOGNROALeFVgpU37m1r7h39gs2fWmuM331LtdptnsxlFIhFqNBqKTEkmk3x6ekrMTNPplJ6entTNzQ3X63W519JsNtmO4IODA/L7/XJ4fX3NLy8vtFgsqNPpWAHv7++Uy+UY+uPjo5wvl0syer2e8nq9tN1uKZFIiMNgMFAI0FKtVtnn80kgOtWJQqEQGa1Wi8fjMZ2fn6ujoyMrKBqNWnowGCS73S46/icnJ6J/fX2RYYrliIO9vT3RXS4XAR/oZ2dn6uLiQtrW3UICgcA/QABSJpNhbd/d3fHt7a3YOI/H40z/SaFQYClvosuoCNQ1kKg4n8/FjsViNBwO1eXlJWezWXECXuFwmIx0Os27u7vScr/flza/v78lCexarcZInEqlGPMjGeTw8PAXRARfXV2p5+dnuYAjLtxut9Wqx+MBWLLqnZ0dC9i3tzeyAxC0tdls5AKkMYP54eFB6eDPz0/Cuk3T8lutVvT6+kpUKpVkJr1bDSRABSOh5/N5xvyaJ+Vyme/v70U3bDabgAiSwOmvEn18fNDx8bFUQwdYLwgGe39/n9br9S8vAJ6eF2Bh96PRiBwOhwALAfv07BCzkEVxA05K/dpwAlhOp1M+dKHJo1eHvwm6xQkDr61YLCpcgu9I1u121WQykQf19xbExgjABvuHVCoVtmteAwtQVmeGs/k+rErYDoBGh3p+dP8D3yIYxR1OrH0AAAAASUVORK5CYII=',
-              'greatwood_planks': 'iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAIAAACQkWg2AAAALHRFWHRDcmVhdGlvbiBUaW1lAE1vbiAxNCBPY3QgMjAxMyAyMjoxODoyMCArMDIwMJtlIH8AAAAHdElNRQfdCwcGLgn+JWHDAAAACXBIWXMAAB7BAAAewQHDaVRTAAAABGdBTUEAALGPC/xhBQAAAYlJREFUeNotUkFuwzAMk2S7DdINw+477AX7/4t2G7BLuySOpZFyjSCQZYmkaOvX50eE3Lft7ba6x+M4TOW2XN3l9/54f1lbLd8/v6/r4hFHP+3EiYiqnsNVEcreByAiophhG88lKjyvrRSUskRCFeg4kK13CXEw8o+81GJoAm49x8gseJTAwCjlUqup7v2cnKas9vxs8iqXMMXOmBmgJgfzfQwkh7sBb0ZOxtlJWOfKTnIEZE95YFDPoaqRNwWwEfAjHOUpsmKLfJukCFutncOE6ZND6QDL8VuvjUwqlwZYrKSlVw7qAXmsTFvRBpy/oxvrFRWYOAZHdRxC3qCJLNJ0CRJoRiYBgUt7Xg2l5zCtsYQiS8EWbFSPIw8ECCtSrSA+YTbaCiynLXKcYxrNIDWnjUpbp1HXVjlJ2olS6AEz/vj4wPgGBAPaYz/4TvItWTqT10cBuO+l1dtyScdl3qbdt737gH3HIOREUhpgE4ivS4WjpTC62ihKclZDp6UhvE2JjGXeC9xB8h+qJzZVQQKcUAAAAABJRU5ErkJggg==',
-              'greatwood_sapling': 'iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAALHRFWHRDcmVhdGlvbiBUaW1lAFR1ZSAxOSBNYXIgMjAxMyAxNDoxMDozNCArMDIwML6FPMYAAAAHdElNRQfdAxMMCwcT8pL8AAAACXBIWXMAAB7BAAAewQHDaVRTAAAABGdBTUEAALGPC/xhBQAAAiZJREFUeNq1UktsUlEUnMvjV+jzlfIKFIEHCDyg0Hah1l8aUxtDoiaa6N61iYl7t27cu3Dv0qSLGhM3TRMTSYliXZRqaxChaWlpC5WGT/n02JC0Cb/Ejedu7j0zdzKTc4D/UZHXd+lfuayzIV2zE5wq1DnC1ptUGy49kUny2fDx2cJZX9kpYGECitkyvi+mmDBjJNcNL9hRE8svPzNdlcM5Xt/fgdNjobDZhkquBBrWY3v4CPnBQ2Tf/mawg4IBGRMBDzLNPXx6FWNdDkxWAaLFiL0qIApG8OUilhJbLUyWfKBCHcWff1A6OV0OgvfD5L/lxdzTOSZf8ZGsF6Higd1iEdrKAI4bDTRVwGJ0uc214vRS2N/Hl3gCN1/cprWldTa/EGW/PDVw103Q6ZRQFJutz5oxLbke+3pPaeJOsAXMXpwkx6SZdLNmcszYKeSw0qx7jJwWSws/H7FRVwT3I4l8ZSNECCixOtKb21jbyEB2O6ElBlFlRDKVxq61jlw8x9oiuB94aVDB48P7ryzB5bGu3YFZzSPMu5CsZpHzEOajUaYR9Rj1mSB1RgjeC3Vlmo6M06VpmcxTInEhdQvXSEpCgCPrQxsFno/T2RhX3610bWQtrINRLWIkPoTMSZwVpDFkGMHOtyyrayrUpFrvVT4tfspAl0cvwJBXY2Mzj1jyR0+uop/AYazAaqsHUB43oFA0+9H6C1z1eonTq+H1+zEg6FrvXry/1HLFBJWQumsAAAAASUVORK5CYII='
-          }
-          for key, value in replacements.items():
-              text = re.sub(rf"{key}\s*: '[^']*'", f"{key:<19}: '{value}'", text)
-          path.write_text(text)
-          PY
-
       - name: Set up Java 21
         uses: actions/setup-java@v4
         with:
@@ -45,6 +25,36 @@ jobs:
 
       - name: Build
         run: gradle build --no-daemon
+
+      - name: Patch runtime texture assets
+        run: |
+          python3 - <<'PY'
+          import base64
+          import zipfile
+          from pathlib import Path
+
+          textures = {
+              'assets/eldergrove/textures/block/greatwood_leaves.png': 'iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAIAAACQkWg2AAAALHRFWHRDcmVhdGlvbiBUaW1lAFR1ZSAxOSBNYXIgMjAxMyAxMzo1NzoyOSArMDIwMDyOMzsAAAAHdElNRQfdAxMLOSfAo/DAAAAACXBIWXMAAB7BAAAewQHDaVRTAAAABGdBTUEAALGPC/xhBQAAAexJREFUeNo9kkfPaVEYhTnn4NN7GyBKDIiaGDDxB/0mCYkgBlokBkIYGIgWvbvP/Xbu3YOdtd++1rvVlUplOBwGAoF+v69SqaxWazab/X6/g8Fgv98XCoVOp6P6d4rFouz3+0OhkM1m+Xx+u90ej8fRaHS73Yiw2WwkGwyGy+XC8/P5SESYzeb3+22xWDAdDofz+SzqpVIpEtbrNf1dLhcWr9crlUqlXq9Xq9UikYiICwaDArjdbkVRANzpdBrwfD4ljnDzMJlMAL1eXy6XAdVqtV6vA8QIAKfTKeO+3++QWywW4/EYaywWY1aeEJNl+fF4QG8+n+O6Xq9/y+dyOdIgB4Y3VSENjkajp9OJYSjME5I+n0+y2+1arZaE3W4ndCAHLMSFNATIxBUOhyGtEN1ut5FfiIjpv0pGoxGGVBQSowENFdjQ8fV6YWJTLHG5XIpopkf0brcrvODpdCqRt9lsNBoNJlgSjQA0bDQak8kEAkSznEQiAQcqSugAabaDjxqkIVo8HgfQAaGJFozFYAp02TwIisjPADqdDiMWFiw6c1qtlgASPrVaDcIHxZ/fQxOxL1GbO5PJiARF/EqsSMR7tVrRmjnBzWYTIyPBCnp852QyKYlPQkT194j/5/F4RD1q8e3oLAgwzh9F9QulytR7OwAAAABJRU5ErkJggg==',
+              'assets/eldergrove/textures/block/shimmerleaf.png': 'iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAALHRFWHRDcmVhdGlvbiBUaW1lAFR1ZSAxOSBNYXIgMjAxMyAxNDoxMTozMCArMDIwMKUIc+sAAAAHdElNRQfdAxMMCyZfm4KiAAAACXBIWXMAAB7BAAAewQHDaVRTAAAABGdBTUEAALGPC/xhBQAAAJZJREFUeNpjYBgFgxysPHbwPyE1TPg0n79/m2HJoT3/yTLgzounDDqyCgw3nz0hzwXyImIMVx4/YFCWkCI/DCTTJMkPAxD48+kPQUvwGvDz4U8GHmMeuCv4LPkIuggDcKlx/cenGcMFIIW8ZrxgxTyGPP///4Ho+/MWu3cYcdnMocTxn5GJkeH/r/8MjKyMDN/vfseqFgChEzJJbQkcMQAAAABJRU5ErkJggg==',
+              'assets/eldergrove/textures/block/vishroom.png': 'iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAK3RFWHRDcmVhdGlvbiBUaW1lAE1vbiA3IEFwciAyMDE0IDE0OjQzOjM5ICswMjAwbXp0AgAAAAd0SU1FB94EBw0PNsxNU4MAAAAJcEhZcwAACxIAAAsSAdLdfvwAAAAEZ0FNQQAAsY8L/GEFAAABuElEQVR42u2SP2/TYBCHn9dx7NgOKWmIUyVUqKCqA4LCxEQkFnZGBiSEkGDgG3QpGwt8AyambgwIKvEFmJBQRaBqoSqIotR1SRPHduI/L2ZohIQDX4CbTqe75+5+d/DfRF6wffmenJs9R7VSB1XQC1w2Nl/T2VoX/wTcWF6RLXWBRXuOsxdsKGq4vs+H3a8cBA5PXz0QUwF3lh7JS6LCVcPCbhYoX2wSmwa+YdKzdN50unzc2eLxi7uTusKxc61xS7b1ea7I74zHLznhv+VkS1CuxlQWatiNBrIb0U8Enhuvfum/f/irTj0GlFJBJfJR1F1qmo9Zt0D2kGER8ckjPtykES5S/DGiqtqTqSeAckHhKBnhSoumNU80GDD43MWMCgy3O/hOnb1M0MQcc8Zs/AkIYo93OISZBqNeidN6ldmoyNBXCdwaO57BvjbkIDxkz93IF3HJaks9LXFeP8Vy1kVXEpQ0RdMq7MewnYQ48TfWnTWRC/jdVm9fl0ZRoikCwzK5/+R5bq46DVA2S7TsGWYsgyiOp37iVIDnh3hDHbIV4iSdClD+Nr7XP8ILxqjZhZ6t3JR5uT8BPUqiJzgcKmEAAAAASUVORK5CYII=',
+          }
+
+          jars = sorted(Path('build/libs').glob('*.jar'))
+          if not jars:
+              raise SystemExit('No jar found in build/libs')
+          jar = jars[0]
+          tmp = jar.with_suffix('.patched.jar')
+
+          replace = set(textures)
+          with zipfile.ZipFile(jar, 'r') as zin, zipfile.ZipFile(tmp, 'w', zipfile.ZIP_DEFLATED) as zout:
+              for info in zin.infolist():
+                  if info.filename in replace:
+                      continue
+                  zout.writestr(info, zin.read(info.filename))
+              for name, encoded in textures.items():
+                  zout.writestr(name, base64.b64decode(encoded))
+          tmp.replace(jar)
+          PY
 
       - name: Upload jar
         uses: actions/upload-artifact@v4
