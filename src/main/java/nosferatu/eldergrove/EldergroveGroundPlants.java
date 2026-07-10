@@ -3,7 +3,7 @@ package nosferatu.eldergrove;
 import net.minecraft.core.BlockPos;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.util.RandomSource;
-import net.minecraft.world.level.WorldGenLevel;
+import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 
@@ -11,7 +11,7 @@ public final class EldergroveGroundPlants {
     private EldergroveGroundPlants() {
     }
 
-    public static void placeNearTree(WorldGenLevel level, BlockPos origin, RandomSource random, int tries, int radius) {
+    public static void placeNearTree(LevelAccessor level, BlockPos origin, RandomSource random, int tries, int radius) {
         for (int i = 0; i < tries; i++) {
             int x = random.nextInt(radius * 2 + 1) - radius;
             int z = random.nextInt(radius * 2 + 1) - radius;
@@ -34,7 +34,7 @@ public final class EldergroveGroundPlants {
         }
     }
 
-    private static BlockPos findPlantSurface(WorldGenLevel level, BlockPos origin) {
+    private static BlockPos findPlantSurface(LevelAccessor level, BlockPos origin) {
         for (int dy = 5; dy >= -4; dy--) {
             BlockPos pos = origin.above(dy);
             if (canPlantOn(level.getBlockState(pos.below())) && level.getBlockState(pos).isAir()) {
