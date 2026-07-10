@@ -28,6 +28,26 @@ public final class EldergroveItems {
             EldergroveBlocks.ELDERGROVE_MOSS
     );
 
+    public static final DeferredItem<BlockItem> TAINTED_SOIL = ITEMS.registerSimpleBlockItem(
+            "tainted_soil",
+            EldergroveBlocks.TAINTED_SOIL
+    );
+
+    public static final DeferredItem<BlockItem> TAINTED_CRUST = ITEMS.registerSimpleBlockItem(
+            "tainted_crust",
+            EldergroveBlocks.TAINTED_CRUST
+    );
+
+    public static final DeferredItem<BlockItem> TAINTED_GROWTH = ITEMS.registerSimpleBlockItem(
+            "tainted_growth",
+            EldergroveBlocks.TAINTED_GROWTH
+    );
+
+    public static final DeferredItem<BlockItem> TAINTED_FIBRE = ITEMS.registerSimpleBlockItem(
+            "tainted_fibre",
+            EldergroveBlocks.TAINTED_FIBRE
+    );
+
     public static final DeferredItem<BlockItem> ELDERWOOD_PLANKS = ITEMS.registerSimpleBlockItem(
             "elderwood_planks",
             EldergroveBlocks.ELDERWOOD_PLANKS
