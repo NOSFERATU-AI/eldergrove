@@ -17,11 +17,12 @@ import java.util.function.Consumer;
 public abstract class OverworldBiomeBuilderMixin {
     @Inject(method = "addBiomes", at = @At("TAIL"))
     private void eldergrove$addEldergroveBiomes(Consumer<Pair<Climate.ParameterPoint, ResourceKey<Biome>>> mapper, CallbackInfo ci) {
-        // Thaumcraft-style Magical Forest should be a real inland forest region: uncommon, but not absurdly rare.
-        // These bands stay away from deserts/badlands by requiring humidity, and avoid shore/ocean/lake-basin noise
-        // by keeping continentalness high and erosion mostly in rougher inland terrain.
-        addEldergrove(mapper, 0.06F, 0.60F, 0.48F, 0.98F, 0.56F, 1.00F, -0.58F, 0.14F, -0.86F, 0.86F);
-        addEldergrove(mapper, 0.22F, 0.72F, 0.56F, 1.00F, 0.50F, 1.00F, -0.52F, 0.18F, -0.72F, 0.72F);
+        // Eldergrove should feel like a Thaumcraft-style magical pocket inside forest climates:
+        // easier to find than before, but still kept away from deserts/badlands by requiring decent humidity.
+        // Continentalness starts at near-inland/mid-inland so it can appear near normal forests, not only far inland.
+        addEldergrove(mapper, 0.05F, 0.62F, 0.42F, 1.00F, 0.34F, 1.00F, -0.62F, 0.32F, -0.90F, 0.90F);
+        addEldergrove(mapper, 0.22F, 0.78F, 0.50F, 1.00F, 0.28F, 0.92F, -0.52F, 0.38F, -0.76F, 0.76F);
+        addEldergrove(mapper, 0.00F, 0.42F, 0.56F, 1.00F, 0.42F, 1.00F, -0.72F, 0.18F, -0.72F, 0.72F);
     }
 
     private static void addEldergrove(
