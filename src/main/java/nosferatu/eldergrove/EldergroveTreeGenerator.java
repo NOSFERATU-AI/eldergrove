@@ -12,7 +12,7 @@ public final class EldergroveTreeGenerator {
     }
 
     public static boolean grow(LevelAccessor level, BlockPos origin, RandomSource random) {
-        int height = 8 + random.nextInt(7);
+        int height = 8 + random.nextInt(5);
 
         if (!canGrow(level, origin, height)) {
             return false;
@@ -41,7 +41,7 @@ public final class EldergroveTreeGenerator {
             }
         }
 
-        // Silverwood-style buttress roots: visible near the ground, not a full ugly cross up the trunk.
+        // Thaumcraft-like buttress roots around the silver trunk.
         setTrunkBlock(level, origin.offset(-1, 0, 0), log);
         setTrunkBlock(level, origin.offset(-1, 1, 0), log);
         setTrunkBlock(level, origin.offset(2, 0, 1), log);
@@ -51,7 +51,7 @@ public final class EldergroveTreeGenerator {
         setTrunkBlock(level, origin.offset(1, 0, 2), log);
         setTrunkBlock(level, origin.offset(1, 1, 2), log);
 
-        // A few short hidden supports inside the crown, so leaves decay naturally only when the tree is chopped.
+        // Hidden canopy supports keep natural leaf decay working after the trunk is chopped.
         placeCanopyBranch(level, origin.offset(0, height - 2, 0), 1, 0, 2 + random.nextInt(2), log);
         placeCanopyBranch(level, origin.offset(1, height - 2, 1), -1, 0, 2 + random.nextInt(2), log);
         placeCanopyBranch(level, origin.offset(0, height - 2, 1), 0, 1, 2 + random.nextInt(2), log);
@@ -74,36 +74,21 @@ public final class EldergroveTreeGenerator {
     }
 
     private static void placeCrown(LevelAccessor level, BlockPos origin, int height, RandomSource random) {
-        // Center is offset half a block because the trunk is 2x2. This keeps the crown round around the trunk.
-        double centerX = origin.getX() + 0.5D;
-        double centerY = origin.getY() + height - 1.0D;
-        double centerZ = origin.getZ() + 0.5D;
+        // Closer to Thaumcraft Silverwood: irregular clustered crown, not a smooth ball.
+        int start = height - 5;
+        int end = height + 3 + random.nextInt(3);
 
-        int bottom = height - 5;
-        int top = height + 3;
+        for (int y = start; y <= end; y++) {
+            int crownCenterY = Math.min(Math.max(y, height - 3), height);
+            for (int x = -5; x <= 5; x++) {
+                for (int z = -5; z <= 5; z++) {
+                    double dx = x;
+                    double dy = y - crownCenterY;
+                    double dz = z;
+                    double distance = dx * dx + dy * dy + dz * dz;
 
-        for (int y = bottom; y <= top; y++) {
-            double dy = (origin.getY() + y - centerY) / 3.8D;
-            double vertical = Math.abs(dy);
-            double radius = 4.9D * (1.0D - vertical * 0.42D);
-
-            if (y <= height - 5) {
-                radius = 1.6D;
-            } else if (y == height - 4) {
-                radius = 3.0D;
-            } else if (y == height + 3) {
-                radius = 1.8D;
-            }
-
-            for (int x = -5; x <= 6; x++) {
-                for (int z = -5; z <= 6; z++) {
-                    BlockPos leafPos = origin.offset(x, y, z);
-                    double dx = leafPos.getX() + 0.5D - centerX;
-                    double dz = leafPos.getZ() + 0.5D - centerZ;
-                    double distance = Math.sqrt(dx * dx + dz * dz);
-
-                    double edgeNoise = stableNoise(leafPos) * 0.45D;
-                    if (distance <= radius + edgeNoise && !isCornerCut(distance, radius, leafPos, random)) {
+                    if (distance < 10 + random.nextInt(8)) {
+                        BlockPos leafPos = origin.offset(x, y, z);
                         if (canReplaceWithLeaves(level, leafPos)) {
                             setLeaves(level, leafPos);
                         }
@@ -111,30 +96,6 @@ public final class EldergroveTreeGenerator {
                 }
             }
         }
-
-        // Small cap on top, typical rounded silverwood silhouette.
-        for (int x = -2; x <= 3; x++) {
-            for (int z = -2; z <= 3; z++) {
-                BlockPos leafPos = origin.offset(x, height + 4, z);
-                double dx = x - 0.5D;
-                double dz = z - 0.5D;
-                if (dx * dx + dz * dz <= 4.6D && canReplaceWithLeaves(level, leafPos)) {
-                    setLeaves(level, leafPos);
-                }
-            }
-        }
-    }
-
-    private static boolean isCornerCut(double distance, double radius, BlockPos pos, RandomSource random) {
-        if (distance < radius - 0.6D) {
-            return false;
-        }
-        return Math.floorMod(pos.getX() * 31 + pos.getY() * 17 + pos.getZ() * 47, 7) == 0 && random.nextInt(4) != 0;
-    }
-
-    private static double stableNoise(BlockPos pos) {
-        int value = Math.floorMod(pos.getX() * 734287 + pos.getY() * 912271 + pos.getZ() * 438289, 1000);
-        return value / 1000.0D;
     }
 
     private static boolean canGrow(LevelAccessor level, BlockPos origin, int height) {
@@ -142,7 +103,7 @@ public final class EldergroveTreeGenerator {
             return false;
         }
 
-        for (int y = 0; y <= height + 4; y++) {
+        for (int y = 0; y <= height + 5; y++) {
             int radius = y < 2 ? 2 : y >= height - 5 ? 6 : 3;
             for (int x = -radius; x <= radius + 1; x++) {
                 for (int z = -radius; z <= radius + 1; z++) {
