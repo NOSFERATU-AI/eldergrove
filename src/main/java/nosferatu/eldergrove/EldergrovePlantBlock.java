@@ -27,6 +27,8 @@ public class EldergrovePlantBlock extends BushBlock {
                 || state.is(Blocks.MOSS_BLOCK)
                 || state.is(EldergroveBlocks.ELDERGROVE_GRASS_FAINT.get())
                 || state.is(EldergroveBlocks.ELDERGROVE_GRASS.get())
-                || state.is(EldergroveBlocks.ELDERGROVE_GRASS_DEEP.get());
+                || state.is(EldergroveBlocks.ELDERGROVE_GRASS_DEEP.get())
+                || state.is(EldergroveBlocks.TAINTED_SOIL.get())
+                || state.is(EldergroveBlocks.TAINTED_CRUST.get());
     }
 }
