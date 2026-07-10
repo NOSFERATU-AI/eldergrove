@@ -32,6 +32,7 @@ public final class EldergroveCreativeTabs {
                         output.accept(EldergroveItems.GREATWOOD_STAIRS.get());
                         output.accept(EldergroveItems.GREATWOOD_SLAB.get());
                         output.accept(EldergroveItems.GREATWOOD_LEAVES.get());
+                        output.accept(EldergroveItems.GREATWOOD_SAPLING.get());
                         output.accept(EldergroveItems.SHIMMERLEAF.get());
                         output.accept(EldergroveItems.VISHROOM.get());
                         output.accept(EldergroveItems.GROVE_HEART.get());
