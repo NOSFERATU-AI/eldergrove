@@ -17,10 +17,13 @@ import java.util.function.Consumer;
 public abstract class OverworldBiomeBuilderMixin {
     @Inject(method = "addBiomes", at = @At("TAIL"))
     private void eldergrove$addEldergroveBiomes(Consumer<Pair<Climate.ParameterPoint, ResourceKey<Biome>>> mapper, CallbackInfo ci) {
-        // Thaumcraft registered Magical Forest only into WARM and COOL biome pools.
-        // Keep Eldergrove in inland, forest-like climate pockets instead of painting over rivers, jungles, deserts, or oceans.
-        addEldergrove(mapper, 0.20F, 0.55F, 0.35F, 0.70F, 0.38F, 1.00F, -0.35F, 0.25F, -0.35F, 0.35F);
-        addEldergrove(mapper, 0.55F, 0.78F, 0.30F, 0.65F, 0.38F, 1.00F, -0.30F, 0.20F, -0.30F, 0.30F);
+        // Thaumcraft-style Magical Forest should be an inland forest pocket, not a desert/badlands repaint.
+        // Keep it out of the hot temperature band, out of low-continentalness lake/coast bands,
+        // and away from highly eroded flat basins that often become big water bowls.
+        addEldergrove(mapper, 0.05F, 0.35F, 0.48F, 0.82F, 0.62F, 1.00F, -0.28F, 0.08F, -0.42F, -0.08F);
+        addEldergrove(mapper, 0.05F, 0.35F, 0.48F, 0.82F, 0.62F, 1.00F, -0.28F, 0.08F, 0.08F, 0.34F);
+        addEldergrove(mapper, 0.22F, 0.52F, 0.55F, 0.88F, 0.68F, 1.00F, -0.24F, 0.06F, -0.38F, -0.10F);
+        addEldergrove(mapper, 0.22F, 0.52F, 0.55F, 0.88F, 0.68F, 1.00F, -0.24F, 0.06F, 0.10F, 0.30F);
     }
 
     private static void addEldergrove(
