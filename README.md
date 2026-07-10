@@ -12,8 +12,7 @@ A NeoForge 1.21.1 Minecraft mod prototype for an ancient magical forest inspired
 
 ## Credits
 
-Some prototype assets are original Thaumcraft assets by Azanor13, used with permission.
+Some prototype assets are original Thaumcraft assets by Azanor13
 
 Original Thaumcraft project: https://www.curseforge.com/minecraft/mc-mods/thaumcraft
 
-The first goal is to keep the base clean and stable before adding full biome generation, tree generation, structures, mobs, and magic mechanics.
