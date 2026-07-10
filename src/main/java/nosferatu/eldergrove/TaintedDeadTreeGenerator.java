@@ -28,6 +28,8 @@ public final class TaintedDeadTreeGenerator {
             return false;
         }
 
+        stainGround(level, origin, random);
+
         BlockState verticalLog = Blocks.DARK_OAK_LOG.defaultBlockState().setValue(AXIS, Direction.Axis.Y);
         for (int y = 0; y <= height; y++) {
             setBlock(level, origin.above(y), verticalLog);
@@ -60,6 +62,30 @@ public final class TaintedDeadTreeGenerator {
 
         if (random.nextInt(3) != 0) {
             setBlock(level, last.above(), Blocks.OAK_LEAVES.defaultBlockState());
+        }
+    }
+
+    private static void stainGround(LevelAccessor level, BlockPos origin, RandomSource random) {
+        for (int i = 0; i < 38; i++) {
+            int x = random.nextInt(11) - 5;
+            int z = random.nextInt(11) - 5;
+            if (x * x + z * z > 26) {
+                continue;
+            }
+
+            BlockPos surface = findSurface(level, origin.offset(x, 0, z));
+            if (surface == null) {
+                continue;
+            }
+
+            BlockPos ground = surface.below();
+            BlockState groundState = level.getBlockState(ground);
+            if (groundState.is(BlockTags.DIRT) || groundState.is(Blocks.GRASS_BLOCK) || groundState.is(Blocks.PODZOL)) {
+                BlockState replacement = random.nextInt(4) == 0
+                        ? EldergroveBlocks.TAINTED_CRUST.get().defaultBlockState()
+                        : EldergroveBlocks.TAINTED_SOIL.get().defaultBlockState();
+                level.setBlock(ground, replacement, 3);
+            }
         }
     }
 
