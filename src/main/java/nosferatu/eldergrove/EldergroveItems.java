@@ -48,6 +48,26 @@ public final class EldergroveItems {
             EldergroveBlocks.ELDERWOOD_SAPLING
     );
 
+    public static final DeferredItem<BlockItem> GREATWOOD_LOG = ITEMS.registerSimpleBlockItem(
+            "greatwood_log",
+            EldergroveBlocks.GREATWOOD_LOG
+    );
+
+    public static final DeferredItem<BlockItem> GREATWOOD_LEAVES = ITEMS.registerSimpleBlockItem(
+            "greatwood_leaves",
+            EldergroveBlocks.GREATWOOD_LEAVES
+    );
+
+    public static final DeferredItem<BlockItem> SHIMMERLEAF = ITEMS.registerSimpleBlockItem(
+            "shimmerleaf",
+            EldergroveBlocks.SHIMMERLEAF
+    );
+
+    public static final DeferredItem<BlockItem> VISHROOM = ITEMS.registerSimpleBlockItem(
+            "vishroom",
+            EldergroveBlocks.VISHROOM
+    );
+
     public static final DeferredItem<BlockItem> GROVE_HEART = ITEMS.registerSimpleBlockItem(
             "grove_heart",
             EldergroveBlocks.GROVE_HEART
