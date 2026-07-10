@@ -3,7 +3,6 @@ package nosferatu.eldergrove.client;
 import net.minecraft.client.renderer.BiomeColors;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.BlockAndTintGetter;
-import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.SubscribeEvent;
@@ -12,13 +11,12 @@ import net.neoforged.neoforge.client.event.RegisterColorHandlersEvent;
 import nosferatu.eldergrove.Eldergrove;
 import nosferatu.eldergrove.EldergroveBlocks;
 import nosferatu.eldergrove.EldergroveItems;
-import nosferatu.eldergrove.EldergroveSpreadingCoreBlock;
 
 @EventBusSubscriber(modid = Eldergrove.MODID, bus = EventBusSubscriber.Bus.MOD, value = Dist.CLIENT)
 public final class EldergroveClient {
-    private static final int MAGICAL_FOREST_EDGE_COLOR = 0x7ACB65;
-    private static final int MAGICAL_FOREST_COLOR = 0x55FF81;
-    private static final int MAGICAL_FOREST_DEEP_COLOR = 0x66FFC5;
+    private static final int MAGICAL_FOREST_EDGE_COLOR = 0x6FCB5D;
+    private static final int MAGICAL_FOREST_COLOR = 0x55E878;
+    private static final int MAGICAL_FOREST_DEEP_COLOR = 0x4FCF9A;
     private static final int MAGICAL_FOREST_LEAF_COLOR = 0x62D6B9;
 
     private EldergroveClient() {
@@ -27,25 +25,22 @@ public final class EldergroveClient {
     @SubscribeEvent
     public static void registerBlockColors(RegisterColorHandlersEvent.Block event) {
         event.register(
-                EldergroveClient::grassColor,
-                Blocks.GRASS_BLOCK,
-                Blocks.SHORT_GRASS,
-                Blocks.TALL_GRASS,
-                Blocks.FERN,
-                Blocks.LARGE_FERN,
+                EldergroveClient::eldergroveGrassColor,
                 EldergroveBlocks.ELDERGROVE_GRASS_FAINT.get(),
                 EldergroveBlocks.ELDERGROVE_GRASS.get(),
                 EldergroveBlocks.ELDERGROVE_GRASS_DEEP.get()
         );
 
         event.register(
-                EldergroveClient::leafColor,
-                Blocks.OAK_LEAVES,
-                Blocks.BIRCH_LEAVES,
-                Blocks.SPRUCE_LEAVES,
-                Blocks.JUNGLE_LEAVES,
-                Blocks.ACACIA_LEAVES,
-                Blocks.DARK_OAK_LEAVES,
+                EldergroveClient::plantColor,
+                net.minecraft.world.level.block.Blocks.SHORT_GRASS,
+                net.minecraft.world.level.block.Blocks.TALL_GRASS,
+                net.minecraft.world.level.block.Blocks.FERN,
+                net.minecraft.world.level.block.Blocks.LARGE_FERN
+        );
+
+        event.register(
+                (state, level, pos, tintIndex) -> MAGICAL_FOREST_LEAF_COLOR,
                 EldergroveBlocks.ELDERWOOD_LEAVES.get()
         );
     }
@@ -65,64 +60,31 @@ public final class EldergroveClient {
         );
     }
 
-    private static int grassColor(BlockState state, BlockAndTintGetter level, BlockPos pos, int tintIndex) {
+    private static int eldergroveGrassColor(BlockState state, BlockAndTintGetter level, BlockPos pos, int tintIndex) {
+        if (pos == null) {
+            return MAGICAL_FOREST_COLOR;
+        }
+        return magicalGrassTarget(pos);
+    }
+
+    private static int plantColor(BlockState state, BlockAndTintGetter level, BlockPos pos, int tintIndex) {
         if (level == null || pos == null) {
             return MAGICAL_FOREST_COLOR;
         }
 
-        int baseColor = BiomeColors.getAverageGrassColor(level, pos);
-        double influence = findAuraInfluence(level, pos);
-        if (influence <= 0.0D) {
-            return baseColor;
+        if (isStandingOnEldergroveGrass(level, pos)) {
+            return blend(BiomeColors.getAverageGrassColor(level, pos), magicalGrassTarget(pos.below()), 0.8D);
         }
 
-        return blend(baseColor, magicalGrassTarget(pos), influence);
+        return BiomeColors.getAverageGrassColor(level, pos);
     }
 
-    private static int leafColor(BlockState state, BlockAndTintGetter level, BlockPos pos, int tintIndex) {
-        if (level == null || pos == null) {
-            return MAGICAL_FOREST_LEAF_COLOR;
-        }
-
-        int baseColor = BiomeColors.getAverageFoliageColor(level, pos);
-        double influence = state.is(EldergroveBlocks.ELDERWOOD_LEAVES.get()) ? 1.0D : findAuraInfluence(level, pos);
-        if (influence <= 0.0D) {
-            return baseColor;
-        }
-
-        return blend(baseColor, MAGICAL_FOREST_LEAF_COLOR, influence);
-    }
-
-    private static double findAuraInfluence(BlockAndTintGetter level, BlockPos pos) {
-        int radius = EldergroveSpreadingCoreBlock.AURA_RADIUS;
-        double strongest = 0.0D;
-        BlockPos.MutableBlockPos mutable = new BlockPos.MutableBlockPos();
-
-        for (int y = -8; y <= 8; y++) {
-            for (int x = -radius; x <= radius; x++) {
-                for (int z = -radius; z <= radius; z++) {
-                    double distanceSq = x * x + y * y + z * z;
-                    if (distanceSq > radius * radius) {
-                        continue;
-                    }
-
-                    mutable.set(pos.getX() + x, pos.getY() + y, pos.getZ() + z);
-                    if (isGroveHeartSafe(level, mutable)) {
-                        double distance = Math.sqrt(distanceSq);
-                        strongest = Math.max(strongest, 1.0D - distance / radius);
-                    }
-                }
-            }
-        }
-
-        return strongest;
-    }
-
-    private static boolean isGroveHeartSafe(BlockAndTintGetter level, BlockPos pos) {
+    private static boolean isStandingOnEldergroveGrass(BlockAndTintGetter level, BlockPos pos) {
         try {
-            return level.getBlockState(pos).is(EldergroveBlocks.GROVE_HEART.get());
-        } catch (IndexOutOfBoundsException ignored) {
-            return false;
+            BlockState below = level.getBlockState(pos.below());
+            return below.is(EldergroveBlocks.ELDERGROVE_GRASS_FAINT.get())
+                    || below.is(EldergroveBlocks.ELDERGROVE_GRASS.get())
+                    || below.is(EldergroveBlocks.ELDERGROVE_GRASS_DEEP.get());
         } catch (RuntimeException ignored) {
             return false;
         }
