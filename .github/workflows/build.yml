@@ -12,6 +12,24 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      - name: Restore Thaumcraft plant textures
+        run: |
+          python3 - <<'PY'
+          import base64
+          from pathlib import Path
+
+          out = Path('src/main/resources/assets/eldergrove/textures/block')
+          out.mkdir(parents=True, exist_ok=True)
+
+          textures = {
+              'shimmerleaf.png': 'iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAALHRFWHRDcmVhdGlvbiBUaW1lAFR1ZSAxOSBNYXIgMjAxMyAxNDoxMTozMCArMDIwMKUIc+sAAAAHdElNRQfdAxMMCyZfm4KiAAAACXBIWXMAAB7BAAAewQHDaVRTAAAABGdBTUEAALGPC/xhBQAAAJZJREFUeNpjYBgFgxysPHbwPyE1TPg0n79/m2HJoT3/yTLgzounDDqyCgw3nz0hzwXyImIMVx4/YFCWkCI/DCTTJMkPAxD48+kPQUvwGvDz4U8GHmMeuCv4LPkIuggDcKlx/cenGcMFIIW8ZrxgxTyGPP///4Ho+/MWu3cYcdnMocTxn5GJkeH/r/8MjKyMDN/vfseqFgChEzJJbQkcMQAAAABJRU5ErkJggg==',
+              'vishroom.png': 'iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAK3RFWHRDcmVhdGlvbiBUaW1lAE1vbiA3IEFwciAyMDE0IDE0OjQzOjM5ICswMjAwbXp0AgAAAAd0SU1FB94EBw0PNsxNU4MAAAAJcEhZcwAACxIAAAsSAdLdfvwAAAAEZ0FNQQAAsY8L/GEFAAABuElEQVR42u2SP2/TYBCHn9dx7NgOKWmIUyVUqKCqA4LCxEQkFnZGBiSEkGDgG3QpGwt8AyambgwIKvEFmJBQRaBqoSqIotR1SRPHduI/L2ZohIQDX4CbTqe75+5+d/DfRF6wffmenJs9R7VSB1XQC1w2Nl/T2VoX/wTcWF6RLXWBRXuOsxdsKGq4vs+H3a8cBA5PXz0QUwF3lh7JS6LCVcPCbhYoX2wSmwa+YdKzdN50unzc2eLxi7uTusKxc61xS7b1ea7I74zHLznhv+VkS1CuxlQWatiNBrIb0U8Enhuvfum/f/irTj0GlFJBJfJR1F1qmo9Zt0D2kGER8ckjPtykES5S/DGiqtqTqSeAckHhKBnhSoumNU80GDD43MWMCgy3O/hOnb1M0MQcc8Zs/AkIYo93OISZBqNeidN6ldmoyNBXCdwaO57BvjbkIDxkz93IF3HJaks9LXFeP8Vy1kVXEpQ0RdMq7MewnYQ48TfWnTWRC/jdVm9fl0ZRoikCwzK5/+R5bq46DVA2S7TsGWYsgyiOp37iVIDnh3hDHbIV4iSdClD+Nr7XP8ILxqjZhZ6t3JR5uT8BPUqiJzgcKmEAAAAASUVORK5CYII='
+          }
+
+          for name, data in textures.items():
+              (out / name).write_bytes(base64.b64decode(data))
+          PY
+
       - name: Set up Java 21
         uses: actions/setup-java@v4
         with:
