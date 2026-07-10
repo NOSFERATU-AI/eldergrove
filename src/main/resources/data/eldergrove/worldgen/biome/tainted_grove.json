@@ -68,9 +68,9 @@
     [
       "eldergrove:tainted_dead_trees",
       "eldergrove:tainted_growth_patches",
-      "eldergrove:mushroom_patches",
       "eldergrove:large_red_mushrooms",
-      "eldergrove:large_brown_mushrooms"
+      "eldergrove:large_brown_mushrooms",
+      "eldergrove:mushroom_patches"
     ],
     []
   ]
