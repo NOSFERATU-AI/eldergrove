@@ -12,7 +12,7 @@ public final class EldergroveTreeGenerator {
     }
 
     public static boolean grow(ServerLevel level, BlockPos origin, RandomSource random) {
-        int height = 9 + random.nextInt(4);
+        int height = 8 + random.nextInt(7);
 
         if (!canGrow(level, origin, height)) {
             return false;
@@ -30,7 +30,7 @@ public final class EldergroveTreeGenerator {
         boolean placedHeart = false;
 
         for (int y = 0; y < height; y++) {
-            boolean canPlaceHeart = y > 2 && y < height - 3 && !placedHeart && random.nextInt(12) == 0;
+            boolean canPlaceHeart = y > 2 && y < height - 3 && !placedHeart && random.nextInt(10) == 0;
             setTrunkBlock(level, origin.offset(0, y, 0), canPlaceHeart ? heart : log);
             setTrunkBlock(level, origin.offset(1, y, 0), log);
             setTrunkBlock(level, origin.offset(0, y, 1), log);
@@ -40,7 +40,7 @@ public final class EldergroveTreeGenerator {
             }
         }
 
-        int shoulderY = 2 + random.nextInt(2);
+        // Silverwood-style buttress roots: visible near the ground, not a full ugly cross up the trunk.
         setTrunkBlock(level, origin.offset(-1, 0, 0), log);
         setTrunkBlock(level, origin.offset(-1, 1, 0), log);
         setTrunkBlock(level, origin.offset(2, 0, 1), log);
@@ -50,63 +50,59 @@ public final class EldergroveTreeGenerator {
         setTrunkBlock(level, origin.offset(1, 0, 2), log);
         setTrunkBlock(level, origin.offset(1, 1, 2), log);
 
-        setTrunkBlock(level, origin.offset(-1, shoulderY, 0), log);
-        setTrunkBlock(level, origin.offset(2, shoulderY, 1), log);
-        setTrunkBlock(level, origin.offset(0, shoulderY, -1), log);
-        setTrunkBlock(level, origin.offset(1, shoulderY, 2), log);
+        // A few short hidden supports inside the crown, so leaves decay naturally only when the tree is chopped.
+        placeCanopyBranch(level, origin.offset(0, height - 2, 0), 1, 0, 2 + random.nextInt(2), log);
+        placeCanopyBranch(level, origin.offset(1, height - 2, 1), -1, 0, 2 + random.nextInt(2), log);
+        placeCanopyBranch(level, origin.offset(0, height - 2, 1), 0, 1, 2 + random.nextInt(2), log);
+        placeCanopyBranch(level, origin.offset(1, height - 2, 0), 0, -1, 2 + random.nextInt(2), log);
 
-        int topY = height;
-        setTrunkBlock(level, origin.offset(0, topY, 0), log);
-        setTrunkBlock(level, origin.offset(1, topY, 0), log);
-        setTrunkBlock(level, origin.offset(0, topY, 1), log);
-        setTrunkBlock(level, origin.offset(1, topY, 1), log);
-
-        placeCanopyBranches(level, origin, height, random, log);
+        if (random.nextBoolean()) {
+            placeCanopyBranch(level, origin.offset(0, height - 1, 0), 1, 1, 2, log);
+            placeCanopyBranch(level, origin.offset(1, height - 1, 1), -1, -1, 2, log);
+        } else {
+            placeCanopyBranch(level, origin.offset(1, height - 1, 0), -1, 1, 2, log);
+            placeCanopyBranch(level, origin.offset(0, height - 1, 1), 1, -1, 2, log);
+        }
     }
 
-    private static void placeCanopyBranches(ServerLevel level, BlockPos origin, int height, RandomSource random, BlockState log) {
-        int y = height - 2;
-        int[][] directions = new int[][]{
-                {1, 0}, {-1, 0}, {0, 1}, {0, -1},
-                {1, 1}, {-1, 1}, {1, -1}, {-1, -1}
-        };
-
-        for (int[] direction : directions) {
-            int length = 2 + random.nextInt(3);
-            int dx = direction[0];
-            int dz = direction[1];
-            for (int step = 1; step <= length; step++) {
-                int branchY = y + step / 3;
-                BlockPos branchPos = origin.offset(0, branchY, 0).offset(dx * step, 0, dz * step);
-                setTrunkBlock(level, branchPos, log);
-            }
+    private static void placeCanopyBranch(ServerLevel level, BlockPos start, int dx, int dz, int length, BlockState log) {
+        for (int step = 1; step <= length; step++) {
+            int y = step == length ? 1 : 0;
+            setTrunkBlock(level, start.offset(dx * step, y, dz * step), log);
         }
     }
 
     private static void placeCrown(ServerLevel level, BlockPos origin, int height, RandomSource random) {
-        BlockPos center = origin.offset(0, height - 1, 0);
+        // Center is offset half a block because the trunk is 2x2. This keeps the crown round around the trunk.
+        double centerX = origin.getX() + 0.5D;
+        double centerY = origin.getY() + height - 1.0D;
+        double centerZ = origin.getZ() + 0.5D;
+
         int bottom = height - 5;
-        int top = height + 4;
+        int top = height + 3;
 
         for (int y = bottom; y <= top; y++) {
-            int relY = y - height;
-            double yShape = Math.abs(relY + 1) * 0.55D;
-            double radius = 4.8D - yShape;
-            if (relY > 1) {
-                radius -= relY * 0.35D;
-            }
-            if (relY < -3) {
-                radius -= 0.6D;
+            double dy = (origin.getY() + y - centerY) / 3.8D;
+            double vertical = Math.abs(dy);
+            double radius = 4.9D * (1.0D - vertical * 0.42D);
+
+            if (y <= height - 5) {
+                radius = 1.6D;
+            } else if (y == height - 4) {
+                radius = 3.0D;
+            } else if (y == height + 3) {
+                radius = 1.8D;
             }
 
             for (int x = -5; x <= 6; x++) {
                 for (int z = -5; z <= 6; z++) {
-                    double dx = x - 0.5D;
-                    double dz = z - 0.5D;
+                    BlockPos leafPos = origin.offset(x, y, z);
+                    double dx = leafPos.getX() + 0.5D - centerX;
+                    double dz = leafPos.getZ() + 0.5D - centerZ;
                     double distance = Math.sqrt(dx * dx + dz * dz);
-                    double ragged = random.nextDouble() * 0.75D;
-                    if (distance <= radius + ragged) {
-                        BlockPos leafPos = center.offset(x, relY, z);
+
+                    double edgeNoise = stableNoise(leafPos) * 0.45D;
+                    if (distance <= radius + edgeNoise && !isCornerCut(distance, radius, leafPos, random)) {
                         if (canReplaceWithLeaves(level, leafPos)) {
                             setLeaves(level, leafPos);
                         }
@@ -115,15 +111,29 @@ public final class EldergroveTreeGenerator {
             }
         }
 
-        for (int i = 0; i < 14; i++) {
-            int x = random.nextInt(11) - 5;
-            int z = random.nextInt(11) - 5;
-            int y = height - 4 + random.nextInt(8);
-            BlockPos leafPos = origin.offset(x, y, z);
-            if (canReplaceWithLeaves(level, leafPos)) {
-                setLeaves(level, leafPos);
+        // Small cap on top, typical rounded silverwood silhouette.
+        for (int x = -2; x <= 3; x++) {
+            for (int z = -2; z <= 3; z++) {
+                BlockPos leafPos = origin.offset(x, height + 4, z);
+                double dx = x - 0.5D;
+                double dz = z - 0.5D;
+                if (dx * dx + dz * dz <= 4.6D && canReplaceWithLeaves(level, leafPos)) {
+                    setLeaves(level, leafPos);
+                }
             }
         }
+    }
+
+    private static boolean isCornerCut(double distance, double radius, BlockPos pos, RandomSource random) {
+        if (distance < radius - 0.6D) {
+            return false;
+        }
+        return Math.floorMod(pos.getX() * 31 + pos.getY() * 17 + pos.getZ() * 47, 7) == 0 && random.nextInt(4) != 0;
+    }
+
+    private static double stableNoise(BlockPos pos) {
+        int value = Math.floorMod(pos.getX() * 734287 + pos.getY() * 912271 + pos.getZ() * 438289, 1000);
+        return value / 1000.0D;
     }
 
     private static boolean canGrow(ServerLevel level, BlockPos origin, int height) {
