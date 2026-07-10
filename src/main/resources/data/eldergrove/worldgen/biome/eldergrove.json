@@ -1,7 +1,7 @@
 {
   "has_precipitation": true,
-  "temperature": 0.7,
-  "downfall": 0.6,
+  "temperature": 0.8,
+  "downfall": 0.4,
   "effects": {
     "sky_color": 7972607,
     "fog_color": 12638463,
@@ -59,7 +59,13 @@
     [],
     [],
     [],
-    [],
+    [
+      "eldergrove:elderwood_trees",
+      "eldergrove:floor_vegetation",
+      "eldergrove:tall_grass_patches",
+      "eldergrove:flower_patches",
+      "eldergrove:mushroom_patches"
+    ],
     []
   ]
 }
