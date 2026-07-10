@@ -10,7 +10,7 @@
     "grass_color": 5635969,
     "foliage_color": 6750149,
     "grass_color_modifier": "none",
-    "ambient_mood_sound": {
+    "mood_sound": {
       "sound": "minecraft:ambient.cave",
       "tick_delay": 6000,
       "block_search_extent": 8,
