@@ -41,7 +41,7 @@ public final class EldergroveBiomeSpreader {
                 .getBiomes();
 
         biomes.getAndSetUnchecked(quartX & 3, quartY & 3, quartZ & 3, eldergrove);
-        chunk.markUnsaved();
+        chunk.setUnsaved(true);
         sendBiomeUpdate(level, chunk, pos);
         refreshSurface(level, pos);
         return true;
