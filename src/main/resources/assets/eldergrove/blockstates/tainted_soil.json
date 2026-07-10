@@ -1,1 +1,43 @@
-{"variants":{"":{"model":"eldergrove:block/tainted_soil"}}}
+{
+  "variants": {
+    "": [
+      {
+        "model": "eldergrove:block/tainted_soil",
+        "weight": 16
+      },
+      {
+        "model": "eldergrove:block/tainted_soil",
+        "y": 90,
+        "weight": 16
+      },
+      {
+        "model": "eldergrove:block/tainted_soil",
+        "y": 180,
+        "weight": 16
+      },
+      {
+        "model": "eldergrove:block/tainted_soil",
+        "y": 270,
+        "weight": 16
+      },
+      {
+        "model": "eldergrove:block/tainted_soil_1",
+        "weight": 2
+      },
+      {
+        "model": "eldergrove:block/tainted_soil_1",
+        "y": 90,
+        "weight": 2
+      },
+      {
+        "model": "eldergrove:block/tainted_soil_2",
+        "weight": 2
+      },
+      {
+        "model": "eldergrove:block/tainted_soil_2",
+        "y": 90,
+        "weight": 2
+      }
+    ]
+  }
+}

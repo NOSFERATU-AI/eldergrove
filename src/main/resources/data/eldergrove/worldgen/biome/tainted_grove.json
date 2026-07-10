@@ -66,9 +66,11 @@
     [],
     [],
     [
+      "eldergrove:tainted_surface",
       "eldergrove:tainted_dead_trees",
       "eldergrove:tainted_fibre_patches",
-      "eldergrove:tainted_growth_patches"
+      "eldergrove:tainted_growth_patches",
+      "eldergrove:vishroom_patches"
     ],
     []
   ]

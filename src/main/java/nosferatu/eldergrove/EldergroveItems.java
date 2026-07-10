@@ -38,9 +38,19 @@ public final class EldergroveItems {
             EldergroveBlocks.TAINTED_CRUST
     );
 
+    public static final DeferredItem<BlockItem> TAINTED_ROCK = ITEMS.registerSimpleBlockItem(
+            "tainted_rock",
+            EldergroveBlocks.TAINTED_ROCK
+    );
+
     public static final DeferredItem<BlockItem> TAINTED_GROWTH = ITEMS.registerSimpleBlockItem(
             "tainted_growth",
             EldergroveBlocks.TAINTED_GROWTH
+    );
+
+    public static final DeferredItem<BlockItem> TAINTED_TENDRIL = ITEMS.registerSimpleBlockItem(
+            "tainted_tendril",
+            EldergroveBlocks.TAINTED_TENDRIL
     );
 
     public static final DeferredItem<BlockItem> TAINTED_FIBRE = ITEMS.registerSimpleBlockItem(

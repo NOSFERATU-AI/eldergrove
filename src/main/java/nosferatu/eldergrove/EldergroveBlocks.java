@@ -67,6 +67,14 @@ public final class EldergroveBlocks {
                     .lightLevel(state -> 1)
     );
 
+    public static final DeferredBlock<Block> TAINTED_ROCK = BLOCKS.registerSimpleBlock(
+            "tainted_rock",
+            BlockBehaviour.Properties.ofFullCopy(Blocks.DEEPSLATE)
+                    .mapColor(MapColor.COLOR_PURPLE)
+                    .sound(SoundType.DEEPSLATE)
+                    .lightLevel(state -> 1)
+    );
+
     public static final DeferredBlock<Block> TAINTED_GROWTH = BLOCKS.register(
             "tainted_growth",
             () -> new EldergrovePlantBlock(
@@ -75,6 +83,18 @@ public final class EldergroveBlocks {
                             .noCollission()
                             .instabreak()
                             .lightLevel(state -> 3)
+                            .sound(SoundType.ROOTS)
+            )
+    );
+
+    public static final DeferredBlock<Block> TAINTED_TENDRIL = BLOCKS.register(
+            "tainted_tendril",
+            () -> new EldergrovePlantBlock(
+                    BlockBehaviour.Properties.ofFullCopy(Blocks.WARPED_ROOTS)
+                            .mapColor(MapColor.COLOR_PURPLE)
+                            .noCollission()
+                            .instabreak()
+                            .lightLevel(state -> 2)
                             .sound(SoundType.ROOTS)
             )
     );

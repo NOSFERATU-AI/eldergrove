@@ -1,0 +1,6 @@
+{
+  "parent": "minecraft:block/cube_all",
+  "textures": {
+    "all": "eldergrove:block/tainted_soil_2"
+  }
+}

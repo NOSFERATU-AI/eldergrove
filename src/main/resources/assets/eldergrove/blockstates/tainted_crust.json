@@ -1,1 +1,43 @@
-{"variants":{"":{"model":"eldergrove:block/tainted_crust"}}}
+{
+  "variants": {
+    "": [
+      {
+        "model": "eldergrove:block/tainted_crust",
+        "weight": 8
+      },
+      {
+        "model": "eldergrove:block/tainted_crust",
+        "y": 90,
+        "weight": 8
+      },
+      {
+        "model": "eldergrove:block/tainted_crust",
+        "y": 180,
+        "weight": 8
+      },
+      {
+        "model": "eldergrove:block/tainted_crust",
+        "y": 270,
+        "weight": 8
+      },
+      {
+        "model": "eldergrove:block/tainted_crust_1",
+        "weight": 2
+      },
+      {
+        "model": "eldergrove:block/tainted_crust_1",
+        "y": 90,
+        "weight": 2
+      },
+      {
+        "model": "eldergrove:block/tainted_crust_2",
+        "weight": 2
+      },
+      {
+        "model": "eldergrove:block/tainted_crust_2",
+        "y": 90,
+        "weight": 2
+      }
+    ]
+  }
+}

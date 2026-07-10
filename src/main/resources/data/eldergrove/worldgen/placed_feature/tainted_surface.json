@@ -1,0 +1,8 @@
+{
+  "feature": "eldergrove:tainted_surface",
+  "placement": [
+    {
+      "type": "minecraft:biome"
+    }
+  ]
+}
