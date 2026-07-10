@@ -1,7 +1,6 @@
 {
-  "parent": "minecraft:block/cross",
-  "render_type": "minecraft:cutout",
+  "parent": "minecraft:block/cube_all",
   "textures": {
-    "cross": "minecraft:block/red_mushroom"
+    "all": "eldergrove:block/vishroom"
   }
 }
