@@ -30,6 +30,11 @@ public final class EldergroveFeatures {
             () -> new TaintedSurfaceFeature(NoneFeatureConfiguration.CODEC)
     );
 
+    public static final DeferredHolder<Feature<?>, Feature<NoneFeatureConfiguration>> TAINTED_TOTEM = FEATURES.register(
+            "tainted_totem",
+            () -> new TaintedTotemFeature(NoneFeatureConfiguration.CODEC)
+    );
+
     public static final DeferredHolder<Feature<?>, Feature<NoneFeatureConfiguration>> TAINTED_DEAD_TREE = FEATURES.register(
             "tainted_dead_tree",
             () -> new TaintedDeadTreeFeature(NoneFeatureConfiguration.CODEC)

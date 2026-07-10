@@ -43,6 +43,11 @@ public final class EldergroveItems {
             EldergroveBlocks.TAINTED_ROCK
     );
 
+    public static final DeferredItem<BlockItem> TAINTED_HEART = ITEMS.registerSimpleBlockItem(
+            "tainted_heart",
+            EldergroveBlocks.TAINTED_HEART
+    );
+
     public static final DeferredItem<BlockItem> TAINTED_GROWTH = ITEMS.registerSimpleBlockItem(
             "tainted_growth",
             EldergroveBlocks.TAINTED_GROWTH

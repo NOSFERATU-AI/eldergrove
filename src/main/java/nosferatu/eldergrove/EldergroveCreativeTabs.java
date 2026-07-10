@@ -36,6 +36,7 @@ public final class EldergroveCreativeTabs {
                         output.accept(EldergroveItems.TAINTED_SOIL.get());
                         output.accept(EldergroveItems.TAINTED_CRUST.get());
                         output.accept(EldergroveItems.TAINTED_ROCK.get());
+                        output.accept(EldergroveItems.TAINTED_HEART.get());
                         output.accept(EldergroveItems.TAINTED_GROWTH.get());
                         output.accept(EldergroveItems.TAINTED_TENDRIL.get());
                         output.accept(EldergroveItems.TAINTED_FIBRE.get());

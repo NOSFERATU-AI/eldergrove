@@ -75,6 +75,18 @@ public final class EldergroveBlocks {
                     .lightLevel(state -> 1)
     );
 
+    public static final DeferredBlock<Block> TAINTED_HEART = BLOCKS.register(
+            "tainted_heart",
+            () -> new TaintedHeartBlock(
+                    BlockBehaviour.Properties.ofFullCopy(Blocks.CRYING_OBSIDIAN)
+                            .mapColor(MapColor.COLOR_PURPLE)
+                            .sound(SoundType.SCULK)
+                            .strength(4.0F, 12.0F)
+                            .lightLevel(state -> 8)
+                            .randomTicks()
+            )
+    );
+
     public static final DeferredBlock<Block> TAINTED_GROWTH = BLOCKS.register(
             "tainted_growth",
             () -> new EldergrovePlantBlock(

@@ -1,0 +1,7 @@
+{
+  "parent": "minecraft:block/cube_column",
+  "textures": {
+    "end": "eldergrove:block/tainted_heart_top",
+    "side": "eldergrove:block/tainted_heart"
+  }
+}

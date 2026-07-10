@@ -4,6 +4,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.protocol.game.ClientboundChunksBiomesPacket;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.tags.BlockTags;
@@ -18,14 +19,27 @@ public final class EldergroveBiomeSpreader {
     }
 
     public static boolean setEldergroveBiome(ServerLevel level, BlockPos pos) {
+        return setBiomeColumn(level, pos, EldergroveBiomes.ELDERGROVE, true);
+    }
+
+    public static boolean setTaintedBiome(ServerLevel level, BlockPos pos) {
+        return setBiomeColumn(level, pos, EldergroveBiomes.TAINTED_GROVE, false);
+    }
+
+    private static boolean setBiomeColumn(
+            ServerLevel level,
+            BlockPos pos,
+            ResourceKey<Biome> targetKey,
+            boolean protectTaintedGrove
+    ) {
         if (pos.getY() < level.getMinBuildHeight() || pos.getY() >= level.getMaxBuildHeight()) {
             return false;
         }
 
         LevelChunk chunk = level.getChunk(pos.getX() >> 4, pos.getZ() >> 4);
-        Holder<Biome> eldergrove = level.registryAccess()
+        Holder<Biome> target = level.registryAccess()
                 .lookupOrThrow(Registries.BIOME)
-                .getOrThrow(EldergroveBiomes.ELDERGROVE);
+                .getOrThrow(targetKey);
 
         int quartX = pos.getX() >> 2;
         int quartZ = pos.getZ() >> 2;
@@ -40,9 +54,9 @@ public final class EldergroveBiomeSpreader {
 
             for (int localQuartY = 0; localQuartY < 4; localQuartY++) {
                 Holder<Biome> current = biomes.get(localQuartX, localQuartY, localQuartZ);
-                if (!current.is(EldergroveBiomes.ELDERGROVE)
-                        && !current.is(EldergroveBiomes.TAINTED_GROVE)) {
-                    biomes.getAndSetUnchecked(localQuartX, localQuartY, localQuartZ, eldergrove);
+                if (!current.is(targetKey)
+                        && (!protectTaintedGrove || !current.is(EldergroveBiomes.TAINTED_GROVE))) {
+                    biomes.getAndSetUnchecked(localQuartX, localQuartY, localQuartZ, target);
                     changed = true;
                 }
             }
