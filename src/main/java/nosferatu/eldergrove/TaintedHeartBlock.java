@@ -1,6 +1,7 @@
 package nosferatu.eldergrove;
 
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.util.RandomSource;
@@ -12,9 +13,10 @@ import net.minecraft.world.level.levelgen.Heightmap;
 
 public class TaintedHeartBlock extends Block {
     public static final int SPREAD_RADIUS = 12;
-    private static final int SPREAD_ATTEMPTS = 6;
+    private static final int SPREAD_ATTEMPTS = 16;
     private static final int TICK_DELAY = 60;
     private static final int MAX_SURFACE_DELTA = 12;
+    private static final int VERTICAL_RADIUS = 12;
 
     public TaintedHeartBlock(Properties properties) {
         super(properties);
@@ -51,14 +53,27 @@ public class TaintedHeartBlock extends Block {
                 continue;
             }
 
-            int surfaceY = level.getHeight(Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, column.getX(), column.getZ()) - 1;
-            if (Math.abs(surfaceY - heartPos.getY()) > MAX_SURFACE_DELTA) {
-                continue;
+            BlockPos target;
+            if ((attempt & 1) == 0) {
+                int surfaceY = level.getHeight(
+                        Heightmap.Types.MOTION_BLOCKING_NO_LEAVES,
+                        column.getX(),
+                        column.getZ()
+                ) - 1;
+                if (Math.abs(surfaceY - heartPos.getY()) > MAX_SURFACE_DELTA) {
+                    continue;
+                }
+                target = new BlockPos(column.getX(), surfaceY, column.getZ());
+            } else {
+                int offsetY = random.nextInt(VERTICAL_RADIUS * 2 + 1) - VERTICAL_RADIUS;
+                target = heartPos.offset(offsetX, offsetY, offsetZ);
+                if (target.getY() < level.getMinBuildHeight() || target.getY() >= level.getMaxBuildHeight()) {
+                    continue;
+                }
             }
 
-            BlockPos surface = new BlockPos(column.getX(), surfaceY, column.getZ());
-            BlockState current = level.getBlockState(surface);
-            if (!isConvertibleSurface(current)) {
+            BlockState current = level.getBlockState(target);
+            if (!isConvertibleSurface(current) || !isExposed(level, target)) {
                 continue;
             }
 
@@ -68,9 +83,9 @@ public class TaintedHeartBlock extends Block {
                             ? EldergroveBlocks.TAINTED_CRUST.get().defaultBlockState()
                             : EldergroveBlocks.TAINTED_SOIL.get().defaultBlockState();
 
-            level.setBlock(surface, replacement, 3);
-            EldergroveBiomeSpreader.setTaintedBiome(level, surface);
-            placeTaintedGrowth(level, surface.above(), random);
+            level.setBlock(target, replacement, 3);
+            EldergroveBiomeSpreader.setTaintedBiome(level, target);
+            placeTaintedGrowth(level, target.above(), random);
             return;
         }
     }
@@ -84,6 +99,16 @@ public class TaintedHeartBlock extends Block {
                 || state.is(EldergroveBlocks.ELDERGROVE_GRASS_FAINT.get())
                 || state.is(EldergroveBlocks.ELDERGROVE_GRASS.get())
                 || state.is(EldergroveBlocks.ELDERGROVE_GRASS_DEEP.get());
+    }
+
+    private static boolean isExposed(ServerLevel level, BlockPos pos) {
+        for (Direction direction : Direction.values()) {
+            BlockState neighbor = level.getBlockState(pos.relative(direction));
+            if (neighbor.isAir() || neighbor.canBeReplaced()) {
+                return true;
+            }
+        }
+        return false;
     }
 
     private static void placeTaintedGrowth(ServerLevel level, BlockPos pos, RandomSource random) {

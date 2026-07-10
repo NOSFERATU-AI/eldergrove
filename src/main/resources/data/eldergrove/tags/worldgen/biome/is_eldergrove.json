@@ -1,6 +1,7 @@
 {
   "replace": false,
   "values": [
-    "eldergrove:eldergrove"
+    "eldergrove:eldergrove",
+    "eldergrove:tainted_grove"
   ]
 }
