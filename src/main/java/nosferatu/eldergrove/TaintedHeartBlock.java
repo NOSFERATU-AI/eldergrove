@@ -2,6 +2,7 @@ package nosferatu.eldergrove;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.tags.BlockTags;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
@@ -57,13 +58,15 @@ public class TaintedHeartBlock extends Block {
 
             BlockPos surface = new BlockPos(column.getX(), surfaceY, column.getZ());
             BlockState current = level.getBlockState(surface);
-            if (!isConvertibleSurface(current) || !hasNearbyTaint(level, surface, heartPos)) {
+            if (!isConvertibleSurface(current)) {
                 continue;
             }
 
-            BlockState replacement = random.nextInt(5) == 0
-                    ? EldergroveBlocks.TAINTED_CRUST.get().defaultBlockState()
-                    : EldergroveBlocks.TAINTED_SOIL.get().defaultBlockState();
+            BlockState replacement = current.is(BlockTags.BASE_STONE_OVERWORLD)
+                    ? EldergroveBlocks.TAINTED_ROCK.get().defaultBlockState()
+                    : random.nextInt(5) == 0
+                            ? EldergroveBlocks.TAINTED_CRUST.get().defaultBlockState()
+                            : EldergroveBlocks.TAINTED_SOIL.get().defaultBlockState();
 
             level.setBlock(surface, replacement, 3);
             EldergroveBiomeSpreader.setTaintedBiome(level, surface);
@@ -73,28 +76,14 @@ public class TaintedHeartBlock extends Block {
     }
 
     private static boolean isConvertibleSurface(BlockState state) {
-        return state.is(Blocks.GRASS_BLOCK)
+        return state.is(BlockTags.DIRT)
+                || state.is(BlockTags.BASE_STONE_OVERWORLD)
+                || state.is(Blocks.GRAVEL)
+                || state.is(Blocks.CLAY)
+                || state.is(Blocks.MUD)
                 || state.is(EldergroveBlocks.ELDERGROVE_GRASS_FAINT.get())
                 || state.is(EldergroveBlocks.ELDERGROVE_GRASS.get())
                 || state.is(EldergroveBlocks.ELDERGROVE_GRASS_DEEP.get());
-    }
-
-    private static boolean hasNearbyTaint(ServerLevel level, BlockPos surface, BlockPos heartPos) {
-        if (surface.distSqr(heartPos) <= 16.0D) {
-            return true;
-        }
-
-        for (BlockPos nearby : BlockPos.betweenClosed(surface.offset(-1, -1, -1), surface.offset(1, 1, 1))) {
-            BlockState state = level.getBlockState(nearby);
-            if (state.is(EldergroveBlocks.TAINTED_SOIL.get())
-                    || state.is(EldergroveBlocks.TAINTED_CRUST.get())
-                    || state.is(EldergroveBlocks.TAINTED_ROCK.get())
-                    || state.is(EldergroveBlocks.TAINTED_HEART.get())) {
-                return true;
-            }
-        }
-
-        return false;
     }
 
     private static void placeTaintedGrowth(ServerLevel level, BlockPos pos, RandomSource random) {
