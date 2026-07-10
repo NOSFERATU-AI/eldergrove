@@ -11,6 +11,11 @@ public final class EldergroveBiomes {
             ResourceLocation.fromNamespaceAndPath(Eldergrove.MODID, "eldergrove")
     );
 
+    public static final ResourceKey<Biome> TAINTED_GROVE = ResourceKey.create(
+            Registries.BIOME,
+            ResourceLocation.fromNamespaceAndPath(Eldergrove.MODID, "tainted_grove")
+    );
+
     private EldergroveBiomes() {
     }
 }
