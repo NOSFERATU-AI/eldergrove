@@ -22,21 +22,19 @@ public final class GreatwoodTreeGenerator {
     }
 
     public static boolean grow(LevelAccessor level, BlockPos origin, RandomSource random) {
-        int heightLimit = 12 + random.nextInt(9);
+        int heightLimit = 11 + random.nextInt(8);
         int trunkHeight = Math.max(7, (int) (heightLimit * 0.618D));
-        if (!canGrow(level, origin, heightLimit + trunkHeight + 5)) {
+        BlockPos root = findGrowRoot(level, origin, heightLimit + trunkHeight + 5);
+        if (root == null) {
             return false;
         }
 
-        placeButtressRoots(level, origin, random);
-        generateGreatwoodPart(level, origin, heightLimit, 1.20D, 0.95D, random);
+        placeButtressRoots(level, root, random);
+        generateGreatwoodPart(level, root, heightLimit, 1.12D, 0.90D, random);
 
-        // Thaumcraft Greatwood is basically two old-tree crowns stacked through the same 2x2 body.
-        // The upper part gives it that huge, uneven umbrella silhouette instead of a simple leaf ball.
-        BlockPos upperOrigin = origin.above(trunkHeight);
-        generateGreatwoodPart(level, upperOrigin, heightLimit, 1.66D, 1.15D, random);
-
-        EldergroveGroundPlants.placeVishroomsNearTree(level, origin, random, 8, 9);
+        // Original-style Greatwood is two overlapping old-tree crowns, but the branches must stay readable.
+        BlockPos upperOrigin = root.above(trunkHeight);
+        generateGreatwoodPart(level, upperOrigin, heightLimit, 1.52D, 1.05D, random);
         return true;
     }
 
@@ -51,8 +49,10 @@ public final class GreatwoodTreeGenerator {
         for (LeafNode node : leafNodes) {
             int nodeBaseHeight = node.branchBaseY() - base.getY();
             if (nodeBaseHeight >= heightLimit * 0.2D) {
-                placeBlockLine(level, new BlockPos(base.getX(), node.branchBaseY(), base.getZ()), node.pos(), true);
-                placeBlockLine(level, new BlockPos(base.getX() + 1, node.branchBaseY(), base.getZ() + 1), node.pos(), false);
+                BlockPos branchBase = new BlockPos(base.getX(), node.branchBaseY(), base.getZ());
+                List<BlockPos> branch = placeBlockLine(level, branchBase, node.pos(), true);
+                decorateBranch(level, branch, random);
+                coverBranchWithLeaves(level, branch, random);
             }
         }
 
@@ -131,8 +131,11 @@ public final class GreatwoodTreeGenerator {
     }
 
     private static void generateLeafNode(LevelAccessor level, BlockPos node, RandomSource random) {
-        for (int y = 0; y < 4; y++) {
-            float radius = (y == 0 || y == 3) ? 2.0F : 3.0F;
+        for (int y = 0; y < 5; y++) {
+            float radius = (y == 0 || y == 4) ? 2.0F : 3.0F;
+            if (y == 2 && random.nextBoolean()) {
+                radius = 3.25F;
+            }
             generateLeafLayer(level, node.above(y), radius, random);
         }
     }
@@ -151,8 +154,7 @@ public final class GreatwoodTreeGenerator {
                     setLeaves(level, pos);
                 }
 
-                // A few lower hanging leaves, but not enough to become a giant unsupported blob.
-                if (radius >= 3.0F && random.nextInt(10) == 0) {
+                if (radius >= 3.0F && random.nextInt(7) == 0) {
                     BlockPos hanging = pos.below();
                     if (canReplace(level, hanging)) {
                         setLeaves(level, hanging);
@@ -187,10 +189,11 @@ public final class GreatwoodTreeGenerator {
         }
     }
 
-    private static void placeBlockLine(LevelAccessor level, BlockPos from, BlockPos to, boolean thinBranch) {
+    private static List<BlockPos> placeBlockLine(LevelAccessor level, BlockPos from, BlockPos to, boolean thinBranch) {
         int[] start = new int[]{from.getX(), from.getY(), from.getZ()};
         int[] end = new int[]{to.getX(), to.getY(), to.getZ()};
         int[] delta = new int[]{end[0] - start[0], end[1] - start[1], end[2] - start[2]};
+        List<BlockPos> placed = new ArrayList<>();
 
         byte dominant = 0;
         for (byte axis = 0; axis < 3; axis++) {
@@ -200,7 +203,7 @@ public final class GreatwoodTreeGenerator {
         }
 
         if (delta[dominant] == 0) {
-            return;
+            return placed;
         }
 
         byte firstOther = OTHER_COORD_PAIRS[dominant];
@@ -219,14 +222,61 @@ public final class GreatwoodTreeGenerator {
             Direction.Axis axis = axisForLine(current[0] - last.getX(), current[1] - last.getY(), current[2] - last.getZ());
             BlockPos pos = new BlockPos(current[0], current[1], current[2]);
             setLog(level, pos, log(axis));
+            placed.add(pos);
 
-            if (!thinBranch && axis != Direction.Axis.Y) {
-                if (Math.abs(pos.getY() - from.getY()) < 3) {
-                    setLog(level, pos.below(), log(axis));
-                }
+            if (!thinBranch && axis != Direction.Axis.Y && Math.abs(pos.getY() - from.getY()) < 2) {
+                setLog(level, pos.below(), log(axis));
+                placed.add(pos.below());
             }
 
             last = pos;
+        }
+        return placed;
+    }
+
+    private static void decorateBranch(LevelAccessor level, List<BlockPos> branch, RandomSource random) {
+        if (branch.size() < 4) {
+            return;
+        }
+        for (int i = 2; i < branch.size() - 1; i++) {
+            if (random.nextInt(5) != 0) {
+                continue;
+            }
+            BlockPos pos = branch.get(i);
+            Direction side = random.nextBoolean() ? Direction.NORTH : Direction.EAST;
+            if (random.nextBoolean()) {
+                side = side.getOpposite();
+            }
+            BlockPos knot = pos.relative(side);
+            if (canReplace(level, knot)) {
+                setLog(level, knot, log(side.getAxis()));
+            }
+        }
+    }
+
+    private static void coverBranchWithLeaves(LevelAccessor level, List<BlockPos> branch, RandomSource random) {
+        for (int i = 2; i < branch.size(); i += 2) {
+            BlockPos pos = branch.get(i);
+            if (random.nextInt(3) == 0) {
+                placeLeafCluster(level, pos.above(), 1 + random.nextInt(2), random);
+            }
+        }
+    }
+
+    private static void placeLeafCluster(LevelAccessor level, BlockPos center, int radius, RandomSource random) {
+        for (int x = -radius; x <= radius; x++) {
+            for (int y = -1; y <= 1; y++) {
+                for (int z = -radius; z <= radius; z++) {
+                    int distance = Math.abs(x) + Math.abs(y) + Math.abs(z);
+                    if (distance > radius + 1 || random.nextInt(8) == 0) {
+                        continue;
+                    }
+                    BlockPos pos = center.offset(x, y, z);
+                    if (canReplace(level, pos)) {
+                        setLeaves(level, pos);
+                    }
+                }
+            }
         }
     }
 
@@ -276,6 +326,18 @@ public final class GreatwoodTreeGenerator {
         return Math.abs(dx) >= Math.abs(dz) ? Direction.Axis.X : Direction.Axis.Z;
     }
 
+    private static BlockPos findGrowRoot(LevelAccessor level, BlockPos origin, int maxHeight) {
+        for (int xOffset = -2; xOffset <= 1; xOffset++) {
+            for (int zOffset = -2; zOffset <= 1; zOffset++) {
+                BlockPos candidate = origin.offset(xOffset, 0, zOffset);
+                if (canGrow(level, candidate, maxHeight)) {
+                    return candidate;
+                }
+            }
+        }
+        return null;
+    }
+
     private static boolean canGrow(LevelAccessor level, BlockPos origin, int maxHeight) {
         if (!level.getBlockState(origin.below()).is(BlockTags.DIRT)
                 || !level.getBlockState(origin.east().below()).is(BlockTags.DIRT)
@@ -285,7 +347,7 @@ public final class GreatwoodTreeGenerator {
         }
 
         for (int y = 0; y <= maxHeight; y++) {
-            int radius = y < 5 ? 4 : y > maxHeight - 12 ? 12 : 7;
+            int radius = y < 4 ? 4 : y > maxHeight - 12 ? 11 : 6;
             for (int x = -radius; x <= radius + 1; x++) {
                 for (int z = -radius; z <= radius + 1; z++) {
                     if (!canReplace(level, origin.offset(x, y, z))) {
@@ -299,11 +361,7 @@ public final class GreatwoodTreeGenerator {
 
     private static boolean canReplace(LevelAccessor level, BlockPos pos) {
         BlockState state = level.getBlockState(pos);
-        return state.isAir()
-                || state.canBeReplaced()
-                || state.is(BlockTags.LEAVES)
-                || state.is(EldergroveBlocks.GREATWOOD_LOG.get())
-                || state.is(EldergroveBlocks.GREATWOOD_LEAVES.get());
+        return state.isAir() || state.canBeReplaced() || state.is(BlockTags.LEAVES);
     }
 
     private static BlockState log(Direction.Axis axis) {
