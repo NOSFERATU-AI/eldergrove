@@ -14,7 +14,7 @@
       "sound": "minecraft:ambient.cave",
       "tick_delay": 4500,
       "block_search_extent": 8,
-      "offset": 2.0
+      "offset": 2
     },
     "ambient_particle": {
       "options": {
@@ -67,10 +67,7 @@
     [],
     [
       "eldergrove:tainted_dead_trees",
-      "eldergrove:tainted_growth_patches",
-      "eldergrove:large_red_mushrooms",
-      "eldergrove:large_brown_mushrooms",
-      "eldergrove:mushroom_patches"
+      "eldergrove:tainted_growth_patches"
     ],
     []
   ]
