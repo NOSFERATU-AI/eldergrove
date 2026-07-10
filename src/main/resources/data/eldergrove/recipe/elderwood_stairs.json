@@ -1,0 +1,1 @@
+{"type":"minecraft:crafting_shaped","category":"building","pattern":["#  ","## ","###"],"key":{"#":{"item":"eldergrove:elderwood_planks"}},"result":{"id":"eldergrove:elderwood_stairs","count":4}}
