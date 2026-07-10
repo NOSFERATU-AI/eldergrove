@@ -1,7 +1,7 @@
 {
   "type": "minecraft:random_patch",
   "config": {
-    "tries": 64,
+    "tries": 48,
     "xz_spread": 7,
     "y_spread": 3,
     "feature": {
@@ -13,25 +13,7 @@
             "entries": [
               {
                 "data": {
-                  "Name": "eldergrove:tainted_growth"
-                },
-                "weight": 5
-              },
-              {
-                "data": {
-                  "Name": "eldergrove:vishroom"
-                },
-                "weight": 1
-              },
-              {
-                "data": {
-                  "Name": "minecraft:brown_mushroom"
-                },
-                "weight": 2
-              },
-              {
-                "data": {
-                  "Name": "minecraft:red_mushroom"
+                  "Name": "eldergrove:tainted_fibre"
                 },
                 "weight": 1
               }
@@ -54,13 +36,6 @@
               {
                 "type": "minecraft:matching_blocks",
                 "blocks": [
-                  "minecraft:grass_block",
-                  "minecraft:podzol",
-                  "minecraft:mycelium",
-                  "minecraft:moss_block",
-                  "eldergrove:eldergrove_grass_faint",
-                  "eldergrove:eldergrove_grass",
-                  "eldergrove:eldergrove_grass_deep",
                   "eldergrove:tainted_soil",
                   "eldergrove:tainted_crust"
                 ],
