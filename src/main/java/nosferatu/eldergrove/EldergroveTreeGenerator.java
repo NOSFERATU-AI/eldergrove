@@ -1,13 +1,18 @@
 package nosferatu.eldergrove;
 
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.block.LeavesBlock;
+import net.minecraft.world.level.block.RotatedPillarBlock;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.properties.EnumProperty;
 
 public final class EldergroveTreeGenerator {
+    private static final EnumProperty<Direction.Axis> AXIS = RotatedPillarBlock.AXIS;
+
     private EldergroveTreeGenerator() {
     }
 
@@ -26,44 +31,65 @@ public final class EldergroveTreeGenerator {
     }
 
     private static void placeTrunk(LevelAccessor level, BlockPos origin, int height, RandomSource random) {
-        BlockState log = EldergroveBlocks.ELDERWOOD_LOG.get().defaultBlockState();
+        BlockState verticalLog = EldergroveBlocks.ELDERWOOD_LOG.get().defaultBlockState().setValue(AXIS, Direction.Axis.Y);
+        BlockState xLog = EldergroveBlocks.ELDERWOOD_LOG.get().defaultBlockState().setValue(AXIS, Direction.Axis.X);
+        BlockState zLog = EldergroveBlocks.ELDERWOOD_LOG.get().defaultBlockState().setValue(AXIS, Direction.Axis.Z);
         BlockState heart = EldergroveBlocks.GROVE_HEART.get().defaultBlockState();
         boolean placedHeart = false;
 
+        // Silverwood-like trunk from Thaumcraft: one core with four vertical side ribs, not a plain 2x2 pillar.
         for (int y = 0; y < height; y++) {
-            boolean canPlaceHeart = y > 2 && y < height - 3 && !placedHeart && random.nextInt(10) == 0;
-            setTrunkBlock(level, origin.offset(0, y, 0), canPlaceHeart ? heart : log);
-            setTrunkBlock(level, origin.offset(1, y, 0), log);
-            setTrunkBlock(level, origin.offset(0, y, 1), log);
-            setTrunkBlock(level, origin.offset(1, y, 1), log);
+            boolean canPlaceHeart = y > 2 && y < height - 3 && !placedHeart && random.nextInt(12) == 0;
+            setTrunkBlock(level, origin.offset(0, y, 0), canPlaceHeart ? heart : verticalLog);
+            setTrunkBlock(level, origin.offset(-1, y, 0), verticalLog);
+            setTrunkBlock(level, origin.offset(1, y, 0), verticalLog);
+            setTrunkBlock(level, origin.offset(0, y, -1), verticalLog);
+            setTrunkBlock(level, origin.offset(0, y, 1), verticalLog);
             if (canPlaceHeart) {
                 placedHeart = true;
             }
         }
 
-        // Thaumcraft-like buttress roots around the silver trunk.
-        setTrunkBlock(level, origin.offset(-1, 0, 0), log);
-        setTrunkBlock(level, origin.offset(-1, 1, 0), log);
-        setTrunkBlock(level, origin.offset(2, 0, 1), log);
-        setTrunkBlock(level, origin.offset(2, 1, 1), log);
-        setTrunkBlock(level, origin.offset(0, 0, -1), log);
-        setTrunkBlock(level, origin.offset(0, 1, -1), log);
-        setTrunkBlock(level, origin.offset(1, 0, 2), log);
-        setTrunkBlock(level, origin.offset(1, 1, 2), log);
+        // Low buttress roots: squat base blocks plus short horizontal roots, closer to the original silverwood silhouette.
+        setTrunkBlock(level, origin.offset(-1, 0, -1), verticalLog);
+        setTrunkBlock(level, origin.offset(1, 0, 1), verticalLog);
+        setTrunkBlock(level, origin.offset(-1, 0, 1), verticalLog);
+        setTrunkBlock(level, origin.offset(1, 0, -1), verticalLog);
 
-        // Hidden canopy supports keep natural leaf decay working after the trunk is chopped.
-        placeCanopyBranch(level, origin.offset(0, height - 2, 0), 1, 0, 2 + random.nextInt(2), log);
-        placeCanopyBranch(level, origin.offset(1, height - 2, 1), -1, 0, 2 + random.nextInt(2), log);
-        placeCanopyBranch(level, origin.offset(0, height - 2, 1), 0, 1, 2 + random.nextInt(2), log);
-        placeCanopyBranch(level, origin.offset(1, height - 2, 0), 0, -1, 2 + random.nextInt(2), log);
+        if (random.nextInt(3) != 0) setTrunkBlock(level, origin.offset(-1, 1, -1), verticalLog);
+        if (random.nextInt(3) != 0) setTrunkBlock(level, origin.offset(1, 1, 1), verticalLog);
+        if (random.nextInt(3) != 0) setTrunkBlock(level, origin.offset(-1, 1, 1), verticalLog);
+        if (random.nextInt(3) != 0) setTrunkBlock(level, origin.offset(1, 1, -1), verticalLog);
 
-        if (random.nextBoolean()) {
-            placeCanopyBranch(level, origin.offset(0, height - 1, 0), 1, 1, 2, log);
-            placeCanopyBranch(level, origin.offset(1, height - 1, 1), -1, -1, 2, log);
-        } else {
-            placeCanopyBranch(level, origin.offset(1, height - 1, 0), -1, 1, 2, log);
-            placeCanopyBranch(level, origin.offset(0, height - 1, 1), 1, -1, 2, log);
-        }
+        setTrunkBlock(level, origin.offset(-2, 0, 0), xLog);
+        setTrunkBlock(level, origin.offset(2, 0, 0), xLog);
+        setTrunkBlock(level, origin.offset(0, 0, -2), zLog);
+        setTrunkBlock(level, origin.offset(0, 0, 2), zLog);
+        if (random.nextBoolean()) setTrunkBlock(level, origin.offset(-3, 0, 0), xLog);
+        if (random.nextBoolean()) setTrunkBlock(level, origin.offset(3, 0, 0), xLog);
+        if (random.nextBoolean()) setTrunkBlock(level, origin.offset(0, 0, -3), zLog);
+        if (random.nextBoolean()) setTrunkBlock(level, origin.offset(0, 0, 3), zLog);
+
+        int shoulderY = height - 4;
+        setTrunkBlock(level, origin.offset(-1, shoulderY, -1), verticalLog);
+        setTrunkBlock(level, origin.offset(1, shoulderY, 1), verticalLog);
+        setTrunkBlock(level, origin.offset(-1, shoulderY, 1), verticalLog);
+        setTrunkBlock(level, origin.offset(1, shoulderY, -1), verticalLog);
+        if (random.nextInt(3) == 0) setTrunkBlock(level, origin.offset(-1, shoulderY - 1, -1), verticalLog);
+        if (random.nextInt(3) == 0) setTrunkBlock(level, origin.offset(1, shoulderY - 1, 1), verticalLog);
+        if (random.nextInt(3) == 0) setTrunkBlock(level, origin.offset(-1, shoulderY - 1, 1), verticalLog);
+        if (random.nextInt(3) == 0) setTrunkBlock(level, origin.offset(1, shoulderY - 1, -1), verticalLog);
+
+        setTrunkBlock(level, origin.offset(-2, shoulderY, 0), xLog);
+        setTrunkBlock(level, origin.offset(2, shoulderY, 0), xLog);
+        setTrunkBlock(level, origin.offset(0, shoulderY, -2), zLog);
+        setTrunkBlock(level, origin.offset(0, shoulderY, 2), zLog);
+
+        // Hidden canopy supports keep natural leaf decay working after the tree is chopped.
+        placeCanopyBranch(level, origin.offset(0, height - 2, 0), 1, 0, 2 + random.nextInt(2), xLog);
+        placeCanopyBranch(level, origin.offset(0, height - 2, 0), -1, 0, 2 + random.nextInt(2), xLog);
+        placeCanopyBranch(level, origin.offset(0, height - 2, 0), 0, 1, 2 + random.nextInt(2), zLog);
+        placeCanopyBranch(level, origin.offset(0, height - 2, 0), 0, -1, 2 + random.nextInt(2), zLog);
     }
 
     private static void placeCanopyBranch(LevelAccessor level, BlockPos start, int dx, int dz, int length, BlockState log) {
@@ -104,9 +130,9 @@ public final class EldergroveTreeGenerator {
         }
 
         for (int y = 0; y <= height + 5; y++) {
-            int radius = y < 2 ? 2 : y >= height - 5 ? 6 : 3;
-            for (int x = -radius; x <= radius + 1; x++) {
-                for (int z = -radius; z <= radius + 1; z++) {
+            int radius = y < 2 ? 3 : y >= height - 5 ? 6 : 3;
+            for (int x = -radius; x <= radius; x++) {
+                for (int z = -radius; z <= radius; z++) {
                     BlockPos pos = origin.offset(x, y, z);
                     if (!canReplaceTreeSpace(level, pos)) {
                         return false;
