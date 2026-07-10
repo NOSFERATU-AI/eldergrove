@@ -15,6 +15,16 @@ public final class EldergroveFeatures {
             () -> new ElderwoodTreeFeature(NoneFeatureConfiguration.CODEC)
     );
 
+    public static final DeferredHolder<Feature<?>, Feature<NoneFeatureConfiguration>> ELDERGROVE_OAK_TREE = FEATURES.register(
+            "eldergrove_oak_tree",
+            () -> new EldergroveOakTreeFeature(NoneFeatureConfiguration.CODEC)
+    );
+
+    public static final DeferredHolder<Feature<?>, Feature<NoneFeatureConfiguration>> GREATWOOD_TREE = FEATURES.register(
+            "greatwood_tree",
+            () -> new GreatwoodTreeFeature(NoneFeatureConfiguration.CODEC)
+    );
+
     private EldergroveFeatures() {
     }
 
