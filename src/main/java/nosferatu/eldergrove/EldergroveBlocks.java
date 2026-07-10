@@ -150,6 +150,16 @@ public final class EldergroveBlocks {
             )
     );
 
+    public static final DeferredBlock<SaplingBlock> GREATWOOD_SAPLING = BLOCKS.register(
+            "greatwood_sapling",
+            () -> new GreatwoodSaplingBlock(
+                    TreeGrower.DARK_OAK,
+                    BlockBehaviour.Properties.ofFullCopy(Blocks.DARK_OAK_SAPLING)
+                            .mapColor(MapColor.PLANT)
+                            .noOcclusion()
+            )
+    );
+
     public static final DeferredBlock<Block> SHIMMERLEAF = BLOCKS.register(
             "shimmerleaf",
             () -> new EldergrovePlantBlock(
