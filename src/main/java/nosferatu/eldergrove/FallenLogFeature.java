@@ -33,12 +33,13 @@ public class FallenLogFeature extends Feature<NoneFeatureConfiguration> {
         LevelAccessor level = context.level();
         Direction direction = HORIZONTAL_DIRECTIONS[random.nextInt(HORIZONTAL_DIRECTIONS.length)];
         Direction.Axis axis = direction.getAxis();
-        int length = 3 + random.nextInt(3);
+        int length = 3 + random.nextInt(4);
         BlockPos origin = context.origin();
 
-        BlockState log = random.nextInt(4) == 0
-                ? Blocks.OAK_LOG.defaultBlockState().setValue(AXIS, axis)
-                : EldergroveBlocks.ELDERWOOD_LOG.get().defaultBlockState().setValue(AXIS, axis);
+        // More oak than silver wood: these are forest-floor fallen logs, not only magical tree remains.
+        BlockState log = random.nextInt(3) == 0
+                ? EldergroveBlocks.ELDERWOOD_LOG.get().defaultBlockState().setValue(AXIS, axis)
+                : Blocks.OAK_LOG.defaultBlockState().setValue(AXIS, axis);
 
         for (int i = 0; i < length; i++) {
             BlockPos pos = origin.relative(direction, i);
@@ -50,6 +51,13 @@ public class FallenLogFeature extends Feature<NoneFeatureConfiguration> {
         for (int i = 0; i < length; i++) {
             BlockPos pos = origin.relative(direction, i);
             level.setBlock(pos, log, 3);
+
+            if (random.nextInt(3) == 0) {
+                BlockPos mossPos = pos.above();
+                if (level.getBlockState(mossPos).isAir()) {
+                    level.setBlock(mossPos, Blocks.MOSS_CARPET.defaultBlockState(), 3);
+                }
+            }
         }
 
         return true;
