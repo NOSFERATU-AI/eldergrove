@@ -18,17 +18,22 @@ public abstract class OverworldBiomeBuilderMixin {
     @Inject(method = "addBiomes", at = @At("TAIL"))
     private void eldergrove$addEldergroveBiomes(Consumer<Pair<Climate.ParameterPoint, ResourceKey<Biome>>> mapper, CallbackInfo ci) {
         // Moist inland forest band: keeps the main Eldergrove identity close to old magical forests.
-        addEldergrove(mapper, 0.05F, 0.72F, 0.50F, 1.00F, 0.34F, 1.00F, -0.86F, 0.12F, -1.00F, 1.00F);
+        addBiome(mapper, EldergroveBiomes.ELDERGROVE, 0.05F, 0.72F, 0.50F, 1.00F, 0.34F, 1.00F, -0.86F, 0.12F, -1.00F, 1.00F);
 
         // Secondary forest pockets: improves findability without pushing too hard into dry/coastal climates.
-        addEldergrove(mapper, 0.16F, 0.78F, 0.44F, 1.00F, 0.30F, 0.88F, -0.58F, 0.30F, -0.82F, 0.82F);
+        addBiome(mapper, EldergroveBiomes.ELDERGROVE, 0.16F, 0.78F, 0.44F, 1.00F, 0.30F, 0.88F, -0.58F, 0.30F, -0.82F, 0.82F);
 
         // Plains/meadow-friendly band: lets Eldergrove appear as a magical grove in open land, not only forests.
-        addEldergrove(mapper, 0.18F, 0.88F, 0.28F, 0.76F, 0.34F, 1.00F, -0.70F, 0.48F, -1.00F, 1.00F);
+        addBiome(mapper, EldergroveBiomes.ELDERGROVE, 0.18F, 0.88F, 0.28F, 0.76F, 0.34F, 1.00F, -0.70F, 0.48F, -1.00F, 1.00F);
+
+        // Tainted Grove: rarer, colder/wetter pockets with darker weirdness/erosion bands.
+        addBiome(mapper, EldergroveBiomes.TAINTED_GROVE, -0.08F, 0.48F, 0.62F, 1.00F, 0.22F, 0.82F, -0.78F, 0.10F, -1.00F, -0.28F);
+        addBiome(mapper, EldergroveBiomes.TAINTED_GROVE, 0.22F, 0.78F, 0.68F, 1.00F, 0.18F, 0.70F, -0.14F, 0.54F, -0.74F, -0.18F);
     }
 
-    private static void addEldergrove(
+    private static void addBiome(
             Consumer<Pair<Climate.ParameterPoint, ResourceKey<Biome>>> mapper,
+            ResourceKey<Biome> biome,
             float minTemperature,
             float maxTemperature,
             float minHumidity,
@@ -50,7 +55,7 @@ public abstract class OverworldBiomeBuilderMixin {
                         Climate.Parameter.span(minWeirdness, maxWeirdness),
                         0.0F
                 ),
-                EldergroveBiomes.ELDERGROVE
+                biome
         ));
     }
 }
