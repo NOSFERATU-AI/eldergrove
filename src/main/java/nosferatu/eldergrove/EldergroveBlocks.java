@@ -5,7 +5,9 @@ import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.LeavesBlock;
 import net.minecraft.world.level.block.RotatedPillarBlock;
 import net.minecraft.world.level.block.SaplingBlock;
+import net.minecraft.world.level.block.SlabBlock;
 import net.minecraft.world.level.block.SoundType;
+import net.minecraft.world.level.block.StairBlock;
 import net.minecraft.world.level.block.grower.TreeGrower;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.material.MapColor;
@@ -57,6 +59,25 @@ public final class EldergroveBlocks {
                     .sound(SoundType.WOOD)
     );
 
+    public static final DeferredBlock<StairBlock> ELDERWOOD_STAIRS = BLOCKS.register(
+            "elderwood_stairs",
+            () -> new StairBlock(
+                    ELDERWOOD_PLANKS.get().defaultBlockState(),
+                    BlockBehaviour.Properties.ofFullCopy(Blocks.OAK_STAIRS)
+                            .mapColor(MapColor.WOOD)
+                            .sound(SoundType.WOOD)
+            )
+    );
+
+    public static final DeferredBlock<SlabBlock> ELDERWOOD_SLAB = BLOCKS.register(
+            "elderwood_slab",
+            () -> new SlabBlock(
+                    BlockBehaviour.Properties.ofFullCopy(Blocks.OAK_SLAB)
+                            .mapColor(MapColor.WOOD)
+                            .sound(SoundType.WOOD)
+            )
+    );
+
     public static final DeferredBlock<RotatedPillarBlock> ELDERWOOD_LOG = BLOCKS.register(
             "elderwood_log",
             () -> new RotatedPillarBlock(
@@ -82,6 +103,32 @@ public final class EldergroveBlocks {
                     BlockBehaviour.Properties.ofFullCopy(Blocks.OAK_SAPLING)
                             .mapColor(MapColor.COLOR_CYAN)
                             .noOcclusion()
+            )
+    );
+
+    public static final DeferredBlock<Block> GREATWOOD_PLANKS = BLOCKS.registerSimpleBlock(
+            "greatwood_planks",
+            BlockBehaviour.Properties.ofFullCopy(Blocks.DARK_OAK_PLANKS)
+                    .mapColor(MapColor.WOOD)
+                    .sound(SoundType.WOOD)
+    );
+
+    public static final DeferredBlock<StairBlock> GREATWOOD_STAIRS = BLOCKS.register(
+            "greatwood_stairs",
+            () -> new StairBlock(
+                    GREATWOOD_PLANKS.get().defaultBlockState(),
+                    BlockBehaviour.Properties.ofFullCopy(Blocks.DARK_OAK_STAIRS)
+                            .mapColor(MapColor.WOOD)
+                            .sound(SoundType.WOOD)
+            )
+    );
+
+    public static final DeferredBlock<SlabBlock> GREATWOOD_SLAB = BLOCKS.register(
+            "greatwood_slab",
+            () -> new SlabBlock(
+                    BlockBehaviour.Properties.ofFullCopy(Blocks.DARK_OAK_SLAB)
+                            .mapColor(MapColor.WOOD)
+                            .sound(SoundType.WOOD)
             )
     );
 
