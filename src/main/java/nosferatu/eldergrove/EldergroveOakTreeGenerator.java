@@ -24,7 +24,7 @@ public final class EldergroveOakTreeGenerator {
     }
 
     public static boolean grow(LevelAccessor level, BlockPos origin, RandomSource random) {
-        int height = 10 + random.nextInt(5);
+        int height = 7 + random.nextInt(4);
         if (!canGrow(level, origin, height)) {
             return false;
         }
@@ -34,21 +34,28 @@ public final class EldergroveOakTreeGenerator {
             setBlock(level, origin.above(y), verticalLog);
         }
 
-        int branchBase = height - 5;
-        int branches = 4 + random.nextInt(3);
-        for (int i = 0; i < branches; i++) {
-            Direction dir = HORIZONTAL_DIRECTIONS[random.nextInt(HORIZONTAL_DIRECTIONS.length)];
-            int startY = branchBase + random.nextInt(4);
-            int length = 3 + random.nextInt(3);
-            BlockPos end = placeFancyBranch(level, origin.above(startY), dir, length);
-            placeLeafBlob(level, end.above(), 2 + random.nextInt(2), random);
+        int branchBase = Math.max(3, height - 4);
+        int branchCount = 3 + random.nextInt(3);
+        for (int i = 0; i < branchCount; i++) {
+            Direction dir = HORIZONTAL_DIRECTIONS[(i + random.nextInt(HORIZONTAL_DIRECTIONS.length)) % HORIZONTAL_DIRECTIONS.length];
+            int startY = branchBase + random.nextInt(3);
+            int length = 2 + random.nextInt(3);
+            BlockPos branchEnd = placeBigOakBranch(level, origin.above(startY), dir, length);
+            placeLeafBlob(level, branchEnd.above(), 2 + random.nextInt(2), random);
         }
 
-        placeTopCrown(level, origin.above(height - 2), random);
+        if (random.nextBoolean()) {
+            Direction diagonalA = random.nextBoolean() ? Direction.NORTH : Direction.SOUTH;
+            Direction diagonalB = random.nextBoolean() ? Direction.EAST : Direction.WEST;
+            BlockPos branchEnd = placeDiagonalBranch(level, origin.above(branchBase + 1), diagonalA, diagonalB, 3);
+            placeLeafBlob(level, branchEnd.above(), 2, random);
+        }
+
+        placeBigOakCrown(level, origin.above(height - 2), random);
         return true;
     }
 
-    private static BlockPos placeFancyBranch(LevelAccessor level, BlockPos start, Direction dir, int length) {
+    private static BlockPos placeBigOakBranch(LevelAccessor level, BlockPos start, Direction dir, int length) {
         Direction.Axis axis = dir.getAxis();
         BlockState log = Blocks.OAK_LOG.defaultBlockState().setValue(AXIS, axis);
         BlockPos last = start;
@@ -60,13 +67,26 @@ public final class EldergroveOakTreeGenerator {
         return last;
     }
 
-    private static void placeTopCrown(LevelAccessor level, BlockPos center, RandomSource random) {
-        // Fancy-oak style: layered, irregular, with side lobes instead of one cube of leaves.
+    private static BlockPos placeDiagonalBranch(LevelAccessor level, BlockPos start, Direction first, Direction second, int length) {
+        BlockState firstAxisLog = Blocks.OAK_LOG.defaultBlockState().setValue(AXIS, first.getAxis());
+        BlockState secondAxisLog = Blocks.OAK_LOG.defaultBlockState().setValue(AXIS, second.getAxis());
+        BlockPos last = start;
+        for (int step = 1; step <= length; step++) {
+            last = start.relative(first, step).relative(second, step).above(step > 1 ? 1 : 0);
+            setBlock(level, last, step % 2 == 0 ? firstAxisLog : secondAxisLog);
+        }
+        return last;
+    }
+
+    private static void placeBigOakCrown(LevelAccessor level, BlockPos center, RandomSource random) {
+        // Vanilla big-oak feel: compact irregular crown wrapped around the upper trunk, not a flat mushroom cap.
         for (int y = -3; y <= 3; y++) {
             int radius;
-            if (y <= -2) {
+            if (y == -3) {
+                radius = 2;
+            } else if (y == -2 || y == 2) {
                 radius = 3;
-            } else if (y <= 1) {
+            } else if (y == -1 || y == 0 || y == 1) {
                 radius = 4;
             } else {
                 radius = 2;
@@ -75,10 +95,15 @@ public final class EldergroveOakTreeGenerator {
             for (int x = -radius; x <= radius; x++) {
                 for (int z = -radius; z <= radius; z++) {
                     int edge = Math.abs(x) + Math.abs(z);
-                    boolean corner = Math.abs(x) == radius && Math.abs(z) == radius;
-                    if (edge > radius + 2 || (corner && random.nextBoolean())) {
+                    boolean hardCorner = Math.abs(x) == radius && Math.abs(z) == radius;
+                    boolean upperSparseEdge = y > 1 && edge > radius + 1;
+                    if (edge > radius + 2 || hardCorner || (upperSparseEdge && random.nextBoolean())) {
                         continue;
                     }
+                    if (random.nextInt(18) == 0 && edge > radius) {
+                        continue;
+                    }
+
                     BlockPos pos = center.offset(x, y, z);
                     if (canReplace(level, pos)) {
                         setLeaves(level, pos);
@@ -111,7 +136,7 @@ public final class EldergroveOakTreeGenerator {
             return false;
         }
         for (int y = 0; y <= height + 4; y++) {
-            int radius = y < height - 5 ? 1 : 6;
+            int radius = y < height - 4 ? 1 : 5;
             for (int x = -radius; x <= radius; x++) {
                 for (int z = -radius; z <= radius; z++) {
                     if (!canReplace(level, origin.offset(x, y, z))) {
