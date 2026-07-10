@@ -85,6 +85,48 @@ public final class EldergroveBlocks {
             )
     );
 
+    public static final DeferredBlock<RotatedPillarBlock> GREATWOOD_LOG = BLOCKS.register(
+            "greatwood_log",
+            () -> new RotatedPillarBlock(
+                    BlockBehaviour.Properties.ofFullCopy(Blocks.DARK_OAK_LOG)
+                            .mapColor(MapColor.WOOD)
+                            .sound(SoundType.WOOD)
+            )
+    );
+
+    public static final DeferredBlock<LeavesBlock> GREATWOOD_LEAVES = BLOCKS.register(
+            "greatwood_leaves",
+            () -> new LeavesBlock(
+                    BlockBehaviour.Properties.ofFullCopy(Blocks.DARK_OAK_LEAVES)
+                            .mapColor(MapColor.PLANT)
+                            .sound(SoundType.AZALEA_LEAVES)
+            )
+    );
+
+    public static final DeferredBlock<Block> SHIMMERLEAF = BLOCKS.register(
+            "shimmerleaf",
+            () -> new EldergrovePlantBlock(
+                    BlockBehaviour.Properties.ofFullCopy(Blocks.LILY_OF_THE_VALLEY)
+                            .mapColor(MapColor.COLOR_LIGHT_BLUE)
+                            .noCollission()
+                            .instabreak()
+                            .lightLevel(state -> 7)
+                            .sound(SoundType.GRASS)
+            )
+    );
+
+    public static final DeferredBlock<Block> VISHROOM = BLOCKS.register(
+            "vishroom",
+            () -> new VishroomBlock(
+                    BlockBehaviour.Properties.ofFullCopy(Blocks.RED_MUSHROOM)
+                            .mapColor(MapColor.COLOR_PURPLE)
+                            .noCollission()
+                            .instabreak()
+                            .lightLevel(state -> 4)
+                            .sound(SoundType.GRASS)
+            )
+    );
+
     public static final DeferredBlock<Block> GROVE_HEART = BLOCKS.register(
             "grove_heart",
             () -> new EldergroveSpreadingCoreBlock(
