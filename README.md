@@ -4,11 +4,6 @@ A NeoForge 1.21.1 Minecraft mod prototype for an ancient magical forest inspired
 
 ## Current prototype
 
-- NeoForge 1.21.1 project scaffold
-- Custom Eldergrove creative tab
-- Staged Eldergrove grass spread from Grove Heart
-- Elderwood log, planks, leaves, sapling, and Grove Heart
-- GitHub Actions build workflow
 
 ## Credits
 
