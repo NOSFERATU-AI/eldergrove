@@ -25,6 +25,10 @@ public final class EldergroveCreativeTabs {
                         output.accept(EldergroveItems.ELDERWOOD_PLANKS.get());
                         output.accept(EldergroveItems.ELDERWOOD_LEAVES.get());
                         output.accept(EldergroveItems.ELDERWOOD_SAPLING.get());
+                        output.accept(EldergroveItems.GREATWOOD_LOG.get());
+                        output.accept(EldergroveItems.GREATWOOD_LEAVES.get());
+                        output.accept(EldergroveItems.SHIMMERLEAF.get());
+                        output.accept(EldergroveItems.VISHROOM.get());
                         output.accept(EldergroveItems.GROVE_HEART.get());
                     })
                     .build()
