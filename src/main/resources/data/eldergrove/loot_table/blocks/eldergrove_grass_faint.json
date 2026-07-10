@@ -1,0 +1,1 @@
+{"type":"minecraft:block","pools":[{"rolls":1,"entries":[{"type":"minecraft:item","name":"eldergrove:eldergrove_grass_faint"}],"conditions":[{"condition":"minecraft:survives_explosion"}]}]}
